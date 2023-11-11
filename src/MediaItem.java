@@ -6,6 +6,7 @@ public class MediaItem {
     private double size = 0d;
     private String fileLocation = "";
     private double trackLength = 0d;
+    private String resolution = "1920x1080";    // Make separate constructor for videos to make unique
 
     // Don't forget getters and setters
     public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl){

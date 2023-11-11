@@ -16,6 +16,7 @@ public class MediaLibrary {
 
     public void addMediaItem(int ID, MediaItem item){   // Unsure about all 4 of these
         // ID here is for media library itself
+        // Can user update media Item? Check email
     }
 
     public void removeMediaItem(int ID, MediaItem item){
