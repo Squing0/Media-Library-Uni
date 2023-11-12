@@ -14,7 +14,7 @@ public class Search {
         return new MediaItem(name, type, format, itemId, size, location);
     }
 
-    public void importItem(int libraryID){
+    public void importItems(int libraryID){ //Make plural as in items?
         MediaItem newItem = searchLocation("lol");
         // Want to add to media library but also don't want to have to instantiate one
     }
