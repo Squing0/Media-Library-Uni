@@ -11,7 +11,7 @@ public class Search {
 
         // pretend as though this one is for images
 
-        return new MediaItem(name, type, format, itemId, size, location);
+        return new MediaItem(name, type, format, itemId, size, location,"");
     }
 
     public void importItems(int libraryID){ //Make plural as in items?

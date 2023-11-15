@@ -35,4 +35,31 @@ public class MediaLibrary {
         System.out.println(items);
         System.out.println(playlists);
     }
+
+
+
+    // Remove which ones aren't used
+    public String getLibraryName() {
+        return libraryName;
+    }
+
+    public void setLibraryName(String libraryName) {
+        this.libraryName = libraryName;
+    }
+
+    public int getLibraryID() {
+        return libraryID;
+    }
+
+    public void setLibraryID(int libraryID) {
+        this.libraryID = libraryID;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

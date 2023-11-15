@@ -29,4 +29,39 @@ public class Playlist {
     public void print(){
         System.out.println(items);
     }
+
+
+
+    // Remove which ones aren't used
+    public String getPlaylistName() {
+        return playlistName;
+    }
+
+    public void setPlaylistName(String playlistName) {
+        this.playlistName = playlistName;
+    }
+
+    public String getPlaylistType() {
+        return playlistType;
+    }
+
+    public void setPlaylistType(String playlistType) {
+        this.playlistType = playlistType;
+    }
+
+    public int getPlaylistID() {
+        return playlistID;
+    }
+
+    public void setPlaylistID(int playlistID) {
+        this.playlistID = playlistID;
+    }
+
+    public int getMediaTotal() {
+        return mediaTotal;
+    }
+
+    public void setMediaTotal(int mediaTotal) {
+        this.mediaTotal = mediaTotal;
+    }
 }

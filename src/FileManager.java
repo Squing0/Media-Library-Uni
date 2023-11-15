@@ -10,4 +10,14 @@ public class FileManager {
     public void openMediaItem(int libraryID){
 
     }
+
+
+    // Remove which ones aren't used
+    public String getFolderLocation() {
+        return folderLocation;
+    }
+
+    public void setFolderLocation(String folderLocation) {
+        this.folderLocation = folderLocation;
+    }
 }
