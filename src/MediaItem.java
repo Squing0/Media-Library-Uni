@@ -1,7 +1,6 @@
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import it.
+import java.io.*;
+
+import it.sauronsoftware.jave.AudioAttributes;
 
 public class MediaItem {
     private String mediaName = "";
@@ -78,32 +77,54 @@ public class MediaItem {
         String ffmpegPath = "ffmpeg-2023-11-13-git-67a2571a55-full_build/bin/ffmpeg.exe";
 
         try{
-//            String[] command = {
-//                 ffmpegPath,
-//                 "ffmpeg",
-//                 "-f", "lavfi",
-//                 "-i", "anullscr=channel_layout=stereo:sample_rate=44100",
-//                 "-t", String.valueOf(duration),
-//                 "-vf", "color=c=black:s=" + width + "x" + height,
-//                 "-c:v", "libx264",
-//                 "-b:v", trackLength + "M",
-//                 "-pix_fmt", "yuv420p",
-//                 fileLocation
-//            };
-//
-//            ProcessBuilder processBuilder = new ProcessBuilder(command);
-//            Process process = processBuilder.start();
-//
-//            process.waitFor();
-//
-//            System.out.println("Video created!");
-//            String[] command{
-//
+            String[] command = {
+                 ffmpegPath,
+                 "ffmpeg",
+                 "-f", "lavfi",
+                 "-i", "anullscr=channel_layout=stereo:sample_rate=44100",
+                 "-t", String.valueOf(duration),
+                 "-vf", "color=c=black:s=" + width + "x" + height,
+                 "-c:v", "libx264",
+                 "-b:v", trackLength + "M",
+                 "-pix_fmt", "yuv420p",
+                 fileLocation
+            };
+
+            String[] command2 = {
+                ffmpegPath,
+                "ffmpeg",
+                "-i", fileLocation,
+                "-t", "30",
+                "-c:a", "copy",
+                "C:\\Users\\lylep\\IdeaProjects\\Media-Library-CW\\Created-Files\\OHNO.mp3"
+            };
+
+            String[] command3 = {
+              ffmpegPath,
+              "-i", fileLocation,
+              "-hide_banner"    // Check if can get file size here
+            };
+
+            ProcessBuilder processBuilder = new ProcessBuilder(command2);
+            Process process = processBuilder.start();
+
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+//            String line;
+//            while((line = reader.readLine()) != null){
+//                System.out.println(line);
 //            }
+
+
+
+            process.waitFor();
+
+            System.out.println("Video created!");
+
         }
         catch(IOException | InterruptedException e){
             e.printStackTrace();
         }
+
 
     }
 
