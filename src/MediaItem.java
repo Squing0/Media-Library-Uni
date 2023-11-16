@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import it.
 
 public class MediaItem {
     private String mediaName = "";
@@ -47,27 +48,63 @@ public class MediaItem {
     }
 
     public void CreateMediafile(String fileLocation){
-        String filePath = fileLocation;
-        long sizeBytes = 1024;
+//        String filePath = fileLocation;
+//        long sizeBytes = 1024;
+//
+////        File file = new File(filePath);
+//
+//        try{
+////            boolean creationSuccess = file.createNewFile();
+//
+//            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
+//            file.setLength(sizeBytes);
+//
+////            if(creationSuccess){
+////                System.out.println("Yes");
+////            }
+////            else{
+////                System.out.println("No");
+////            }
+//        }
+//        catch (IOException e){
+//            System.out.println("Oopsies");
+//        }
 
-//        File file = new File(filePath);
+        int width = 1920;
+        int height = 1080;
+        int duration = 30;
+        int trackLength = 50;
+
+        String ffmpegPath = "ffmpeg-2023-11-13-git-67a2571a55-full_build/bin/ffmpeg.exe";
 
         try{
-//            boolean creationSuccess = file.createNewFile();
-
-            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
-            file.setLength(sizeBytes);
-
-//            if(creationSuccess){
-//                System.out.println("Yes");
-//            }
-//            else{
-//                System.out.println("No");
+//            String[] command = {
+//                 ffmpegPath,
+//                 "ffmpeg",
+//                 "-f", "lavfi",
+//                 "-i", "anullscr=channel_layout=stereo:sample_rate=44100",
+//                 "-t", String.valueOf(duration),
+//                 "-vf", "color=c=black:s=" + width + "x" + height,
+//                 "-c:v", "libx264",
+//                 "-b:v", trackLength + "M",
+//                 "-pix_fmt", "yuv420p",
+//                 fileLocation
+//            };
+//
+//            ProcessBuilder processBuilder = new ProcessBuilder(command);
+//            Process process = processBuilder.start();
+//
+//            process.waitFor();
+//
+//            System.out.println("Video created!");
+//            String[] command{
+//
 //            }
         }
-        catch (IOException e){
-            System.out.println("Oopsies");
+        catch(IOException | InterruptedException e){
+            e.printStackTrace();
         }
+
     }
 
     public void delete(int ID){

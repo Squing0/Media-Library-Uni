@@ -1,14 +1,14 @@
 public class Main {
     public static void main(String[] args) {
 
-        String name = "ohYes";
-        String format = "jpg";
+        String name = "lol2";
+        String format = "mp4";
 
         String fileLocation = "Created-Files/" + name + "." + format;
 
         MediaItem item1 = new MediaItem(name, "Image", format, 1, 50, fileLocation , "");
 
-//        item1.CreateMediafile(item1.getFileLocation());
+        item1.CreateMediafile(item1.getFileLocation());
 
 //        MediaItem item2 = new MediaItem("Winter", "Image", "JPG", 2, 60, "lol" ,"");
 //        MediaItem item3 = new MediaItem("Autumn", "Image", "PNG", 3, 70, "lol" ,"");
