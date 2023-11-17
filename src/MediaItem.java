@@ -7,11 +7,12 @@ public class MediaItem {
     private String mediaType = "";  // Know mot really need to add values but lecturers might like it???
     private String format = "";
     private int itemID = 0;
-    private double size = 0d;
+    private double size = 0;
     private String fileLocation = "";
-    private double trackLength = 0d;
+    private double trackLength = 0;
     private String resolution = "1920x1080";    // Make separate constructor for videos to make unique
 
+    // Should call save method in constructors? Opinion seems to be that bad idea
     // Use for audio
     public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl){
     // Still unsure what creating media items means
@@ -46,7 +47,25 @@ public class MediaItem {
         this.resolution = r;
     }
 
-    public void CreateMediafile(String fileLocation){
+    public void CreateMediaFileBasic(String fl, String mediaType) throws IOException {
+        RandomAccessFile file = new RandomAccessFile(fl, "rw");
+        // Add try catch or have throws?
+        file.close();
+
+        switch (mediaType){
+            case "Image":
+                System.out.println("Image Created!");
+                break;
+            case "Audio":
+                System.out.println("Audio Created!");
+                break;
+            case "Video":
+                System.out.println("Video Created!");
+        }
+        // REMEMBER TO LET USER KNOW THAT THESE CANNOT BE OPENED
+    }
+
+    public void AccessFileInfo(String fileLocation){
 //        String filePath = fileLocation;
 //        long sizeBytes = 1024;
 //
@@ -128,6 +147,23 @@ public class MediaItem {
 
     }
 
+    public void printAll(){
+        // Purely to test accessing info
+        String s1 = "";
+
+        if(this.mediaType == "Image"){
+            s1 = String.format("Name: %s\n Type: %s\nFormat: %s\nID: %o\nSize: %.2f(MB)\nResolution: %s",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.resolution);
+            System.out.println(s1);
+        }
+        else if (mediaType == "Audio"){
+            s1 = String.format("Name: %s\n Type: %s\nFormat: %s\nID: %o\nSize: %.2f(MB)\nDuration: %.2f Seconds",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength);
+            System.out.println(s1);
+        }
+        else if (mediaType == "Video"){
+
+        }
+
+    }
     public void delete(int ID){
         // Use for either deleting media item or deleting media item and file if item was manually made?
     }
