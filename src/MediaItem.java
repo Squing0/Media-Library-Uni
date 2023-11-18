@@ -1,7 +1,5 @@
 import java.io.*;
 
-import it.sauronsoftware.jave.AudioAttributes;
-
 public class MediaItem {
     private String mediaName = "";
     private String mediaType = "";  // Know mot really need to add values but lecturers might like it???
@@ -65,88 +63,6 @@ public class MediaItem {
         // REMEMBER TO LET USER KNOW THAT THESE CANNOT BE OPENED
     }
 
-    public void AccessFileInfo(String fileLocation){
-//        String filePath = fileLocation;
-//        long sizeBytes = 1024;
-//
-////        File file = new File(filePath);
-//
-//        try{
-////            boolean creationSuccess = file.createNewFile();
-//
-//            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
-//            file.setLength(sizeBytes);
-//
-////            if(creationSuccess){
-////                System.out.println("Yes");
-////            }
-////            else{
-////                System.out.println("No");
-////            }
-//        }
-//        catch (IOException e){
-//            System.out.println("Oopsies");
-//        }
-
-        int width = 1920;
-        int height = 1080;
-        int duration = 30;
-        int trackLength = 50;
-
-        String ffmpegPath = "ffmpeg-2023-11-13-git-67a2571a55-full_build/bin/ffmpeg.exe";
-
-        try{
-            String[] command = {
-                 ffmpegPath,
-                 "ffmpeg",
-                 "-f", "lavfi",
-                 "-i", "anullscr=channel_layout=stereo:sample_rate=44100",
-                 "-t", String.valueOf(duration),
-                 "-vf", "color=c=black:s=" + width + "x" + height,
-                 "-c:v", "libx264",
-                 "-b:v", trackLength + "M",
-                 "-pix_fmt", "yuv420p",
-                 fileLocation
-            };
-
-            String[] command2 = {
-                ffmpegPath,
-                "ffmpeg",
-                "-i", fileLocation,
-                "-t", "30",
-                "-c:a", "copy",
-                "C:\\Users\\lylep\\IdeaProjects\\Media-Library-CW\\Created-Files\\OHNO.mp3"
-            };
-
-            String[] command3 = {
-              ffmpegPath,
-              "-i", fileLocation,
-              "-hide_banner"    // Check if can get file size here
-            };
-
-            ProcessBuilder processBuilder = new ProcessBuilder(command2);
-            Process process = processBuilder.start();
-
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-//            String line;
-//            while((line = reader.readLine()) != null){
-//                System.out.println(line);
-//            }
-
-
-
-            process.waitFor();
-
-            System.out.println("Video created!");
-
-        }
-        catch(IOException | InterruptedException e){
-            e.printStackTrace();
-        }
-
-
-    }
-
     public void printAll(){
         // Purely to test accessing info
         String s1 = "";
@@ -160,9 +76,27 @@ public class MediaItem {
             System.out.println(s1);
         }
         else if (mediaType == "Video"){
-
+            s1 = String.format("Name: %s\n Type: %s\nFormat: %s\nID: %o\nSize: %.2f(MB)\nDuration: %.2f Seconds\nResolution: %s",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.resolution);
+            System.out.println(s1);
         }
+    }
 
+    public String printAllMediaLibrary(){
+        String s1 = "";
+
+        if(this.mediaType == "Image"){
+            s1 = String.format("%s,%s,%s,%o,%.2f(MB),%s\n",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.resolution);
+            return s1;
+        }
+        else if (mediaType == "Audio"){
+            s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f\n",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength);
+            return s1;
+        }
+        else if (mediaType == "Video"){
+            s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s\n",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.resolution);
+            return s1;
+        }
+        return null;
     }
     public void delete(int ID){
         // Use for either deleting media item or deleting media item and file if item was manually made?

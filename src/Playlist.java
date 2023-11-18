@@ -20,14 +20,24 @@ public class Playlist {
     }
 
     public void addMedia(int ID, MediaItem item){
-        items.add(item);
+        if(item.getMediaType() == this.playlistType){
+            items.add(item);
+        }
+        else{
+            System.out.println(item.getMediaType() + " isn't the playlist type of " + this.playlistType);
+        }
+
     }
     public void deleteMedia(int ID, MediaItem item){
+
         items.remove(item);
     }
 
     public void print(){
-        System.out.println(items);
+        for(int i =0; i < items.size(); i++){
+            items.get(i).printAll();
+            System.out.println();
+        }
     }
 
 

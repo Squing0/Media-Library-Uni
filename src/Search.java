@@ -73,10 +73,25 @@ public class Search {
         else if(videoFormats.contains(format.toLowerCase())){
             type = "Video";
             ID = 1;
-            System.out.println("Video File!");
+            fileSize = getFileSize(fl);
+            duration = Double.parseDouble(accessMediaSpecific(durationCheck));
+            resolution = accessMediaSpecific(resolutionCheck);
+            MediaItem item = new MediaItem(name, type, format, ID, fileSize, fl, duration, resolution.replace(",","x"));
+            item.printAll();
         }
         else{
             System.out.println("File is either not a media file or has unsupported file type!");
+        }
+    }
+
+    public void searchDirectory(String fd) throws IOException, InterruptedException {
+        Search search = new Search();
+
+        File dir = new File(fd);
+        File[] files = dir.listFiles();     // Assumes that there are no sub directories
+        for (File file : files){
+            System.out.println();
+            search.typeVerify(file.getAbsolutePath().replace("\\", "/"));
         }
     }
 
@@ -88,7 +103,7 @@ public class Search {
 
         return megabytes;
     }
-    public String getImageResolution(String fl) throws IOException {  // Use try and catch clause?
+    public String getImageResolution(String fl) throws IOException {  // Use try and catch and finally clause?
         //getting resolution
         BufferedImage image = ImageIO.read(new File(fl));
         int width = image.getWidth();
