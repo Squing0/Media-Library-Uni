@@ -1,0 +1,6 @@
+Winter,Image,jpg,2,60.00(MB),120x120,Created-Files/Winter.jpg
+Summer,Image,png,3,70.00(MB),400x600,Created-Files/Summer.png
+file_example_MP4_480_1_5MG,Video,mp4,1,20.00(MB),30.00,1920x1080,Created-Files/file_example_MP4_480_1_5MG.mp4
+
+Autumn,Audio,mp3,3,70.00(MB),30.00,Created-Files/Autumn.mp3
+Spring,Video,mov,3,70.00(MB),40.00,400x600,Created-Files/Spring.mov

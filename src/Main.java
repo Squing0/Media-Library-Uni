@@ -6,17 +6,60 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        String name = "Eh";
+        String name = "Lolsers2";
         String format = "mp3";
         String mediaType = "Audio";
-        double fileSize = 1d;
-        String resolution = "1920x1080";
-        double trackLength = 30;
+        double fileSize = 3d;
+        String resolution = "480x480";
+        double trackLength = 40;
 
 
         String fileLocation = "Created-Files/" + name + "." + format;
-
         String fileLocation2 = "Created-Files/" + name;
+
+       MediaItem item = new MediaItem(name, mediaType, format, 1, 20, fileLocation,trackLength, resolution, false);
+
+        String fileandFormat = name + "." + format;
+
+        MediaLibrary library = new MediaLibrary();
+
+
+        Playlist playlist = new Playlist("Vibrations", "Audio", 1);
+
+        String playlistNameDetails = "Playlist, " + playlist.getPlaylistName() + ", " + playlist.getPlaylistType();
+
+//        library.addItemSpecificPoint("Media-Libraries/Seasons2.txt", "Playlists:", playlistNameDetails);
+        // Need to get item back from library and build new item for this to work
+        // At same time, this info will be stored in GUI already so just go with this for now
+        String libraryLocation = "Media-Libraries/Seasons2.txt";
+//        playlist.addMedia(1, item, libraryLocation);
+
+        // Checking before a playlist is created
+        String playlistName = "Vibrations";
+        String playlistType = "Audio";
+
+//        if (library.checkPlaylistName(playlistName, playlistType, libraryLocation)){
+//            System.out.println("Playlist name " + playlistName + " of type " + playlistType + " already exists");
+//        }
+//        else{
+//            System.out.println("Playlist created!");
+//        }
+
+        library.deleteSpecificLine();
+
+
+
+
+//        if(library.nameAlreadyPresent(fileandFormat, "Media-Libraries/Library10.txt") == true){
+//            System.out.println("File with same name and format already exists!");
+//        }
+//        else{
+//            System.out.println("File Created!");
+//        }
+
+//        library.addItemSpecificPoint("Media-Libraries/Library9.txt", "Spring", item.printAllMediaLibrary());
+//        Search search = new Search();
+//        search.typeVerify("C:/Users/lylep/Downloads/file_example_MP4_480_1_5MG.mp4");
 
         //Creating image
 
@@ -54,10 +97,10 @@ public class Main {
 //        System.out.println("Absolute path of output" + new File("Created-Files/OHNO.mp3").getAbsolutePath());
 
 
-        MediaItem item2 = new MediaItem("Winter", "Image", "jpg", 2, 60, "lol" ,"120x120");
-        MediaItem item3 = new MediaItem("Autumn", "Image", "png", 3, 70, "lol" ,"400x600");
-        MediaItem item4 = new MediaItem("Autumn", "Audio", "mp3", 3, 70, "lol" ,30);
-        MediaItem item5 = new MediaItem("Spring", "Video", "mov", 3, 70, "lol" ,40,"400x600");
+//        MediaItem item2 = new MediaItem("Winter", "Image", "jpg", 2, 60, "Created-Files/Winter.jpg" ,"120x120", true);
+//        MediaItem item3 = new MediaItem("Summer", "Image", "png", 3, 70, "Created-Files/Summer.png" ,"400x600", true);
+//        MediaItem item4 = new MediaItem("Autumn", "Audio", "mp3", 3, 70, "Created-Files/Autumn.mp3" ,30, true);
+//        MediaItem item5 = new MediaItem("Spring", "Video", "mov", 3, 70, "Created-Files/Spring.mov" ,40,"400x600", true);
 //
 //        Playlist playlist1 = new Playlist("Random", "Image", 1);
 //
@@ -66,12 +109,16 @@ public class Main {
 //
 //        playlist1.print();
 
-        MediaLibrary library = new MediaLibrary("Library7", 1, "lol");
-
+//        MediaLibrary library = new MediaLibrary("Library10", 1, "lol");
+//
 //        library.addMediaItem(2,item2);
-        library.addMediaItem(3,item3);
-        library.addMediaItem(4,item4);
-        library.addMediaItem(5,item5);
+//        library.addMediaItem(3,item3);
+//        library.addMediaItem(4,item4);
+//        library.addMediaItem(5,item5);
+
+//        MediaLibrary library = new MediaLibrary();
+//
+//        library.addItemSpecificPoint("Media-Libraries/Library8.txt", "Autumn", "Text to insert");
 
 //        library.addMediaItem(3,item3);
 //

@@ -4,7 +4,7 @@ public class Playlist {
     private String playlistName = "";
     private String playlistType = "";
     private int playlistID = 0;
-    private ArrayList<MediaItem> items = new ArrayList<MediaItem>();
+    private ArrayList<MediaItem> items = new ArrayList<MediaItem>();    // Should I use generics in other places?
     private int mediaTotal = 0; // Even needed??
 
     public Playlist(String n, String t, int ID){
@@ -14,22 +14,35 @@ public class Playlist {
         this.playlistID = ID;
     }
 
+    public Playlist(){  //Not sure if this is good practice but just testing
+
+    }
+
     public void deletePlaylist(int ID, Playlist playlist){  // Not sure if the ID is needed for any of these items
         playlist.items.clear();
         playlist = null;
     }
 
-    public void addMedia(int ID, MediaItem item){
-        if(item.getMediaType() == this.playlistType){
-            items.add(item);
+    public void addMedia(int ID, MediaItem item, String libraryLocation){
+        MediaLibrary library = new MediaLibrary();
+
+        if(!library.checkPlaylistItem(playlistName, item.getMediaName(), libraryLocation)){
+            if(item.getMediaType() == playlistType){
+                items.add(item);
+                library.addItemSpecificPoint(libraryLocation, playlistName, item.printAllMediaLibrary());
+            }
+            else{
+                System.out.println(item.getMediaType() + " isn't the playlist type of " + playlistType);
+            }
         }
-        else{
-            System.out.println(item.getMediaType() + " isn't the playlist type of " + this.playlistType);
+        else {
+            System.out.println("Item already exists in playlist!");
         }
 
     }
-    public void deleteMedia(int ID, MediaItem item){
 
+
+    public void deleteMedia(int ID, MediaItem item){
         items.remove(item);
     }
 

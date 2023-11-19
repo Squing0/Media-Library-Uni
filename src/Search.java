@@ -22,7 +22,7 @@ public class Search {
 
         // pretend as though this one is for images
 
-        return new MediaItem(name, type, format, itemId, size, location,"");
+        return new MediaItem(name, type, format, itemId, size, location,"", true);
     }
 
     public void importItems(int libraryID){ //Make plural as in items?
@@ -47,41 +47,48 @@ public class Search {
 
         String type = ""; // Mame better later
         int ID = 1;
-        double fileSize = 1;
+        double fileSize = getFileSize(fl);
         String resolution;
         double duration;
 
         String resolutionCheck = " -i " + fl + " -show_entries stream=width,height -v quiet -of csv=p=0";
         String durationCheck = " -i " + fl + " -show_entries format=duration -v quiet -of csv=p=0";
 
-        if(imageFormats.contains(format.toLowerCase())){
-            type = "Image";
-            ID = 1;
-            fileSize = getFileSize(fl);
-            resolution = getImageResolution(fl);
-            MediaItem item = new MediaItem(name, type, format, ID, fileSize, fl, resolution);
-            item.printAll();
-        }
-        else if(audioFormats.contains(format.toLowerCase())){
-            type = "Audio";
-            ID = 1;
-            fileSize = getFileSize(fl);
-            duration = Double.parseDouble(accessMediaSpecific(durationCheck));  // Need to parse back to double as string is returned
-            MediaItem item = new MediaItem(name, type, format, ID, fileSize, fl,duration);
-            item.printAll();
-        }
-        else if(videoFormats.contains(format.toLowerCase())){
-            type = "Video";
-            ID = 1;
-            fileSize = getFileSize(fl);
-            duration = Double.parseDouble(accessMediaSpecific(durationCheck));
-            resolution = accessMediaSpecific(resolutionCheck);
-            MediaItem item = new MediaItem(name, type, format, ID, fileSize, fl, duration, resolution.replace(",","x"));
-            item.printAll();
+        MediaLibrary library = new MediaLibrary();
+        if(!library.nameAlreadyPresent(nameAndFormat, "Media-Libraries/Library10.txt")) { //Make simpler, how is the library location gotten?
+            if(imageFormats.contains(format.toLowerCase())){
+                type = "Image";
+//            ID = 1;
+//            fileSize = getFileSize(fl);
+                resolution = getImageResolution(fl);
+                MediaItem item = new MediaItem(name, type, format, ID, fileSize, fl, resolution, true);
+                item.printAll();
+            }
+            else if(audioFormats.contains(format.toLowerCase())){
+                type = "Audio";
+//            ID = 1;
+//            fileSize = getFileSize(fl);
+                duration = Double.parseDouble(accessMediaSpecific(durationCheck));  // Need to parse back to double as string is returned
+                MediaItem item = new MediaItem(name, type, format, ID, fileSize, fl,duration, true);
+                item.printAll();
+            }
+            else if(videoFormats.contains(format.toLowerCase())){
+                type = "Video";
+//            ID = 1;
+//            fileSize = getFileSize(fl);
+                duration = Double.parseDouble(accessMediaSpecific(durationCheck));
+                resolution = accessMediaSpecific(resolutionCheck);
+                MediaItem item = new MediaItem(name, type, format, ID, fileSize, fl, duration, resolution.replace(",","x"), true);
+                item.printAll();
+            }
+            else{
+                System.out.println("File is either not a media file or has unsupported file type!");
+            }
         }
         else{
-            System.out.println("File is either not a media file or has unsupported file type!");
+            System.out.println("File with that name and format already exists!");
         }
+
     }
 
     public void searchDirectory(String fd) throws IOException, InterruptedException {

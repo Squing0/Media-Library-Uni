@@ -9,10 +9,11 @@ public class MediaItem {
     private String fileLocation = "";
     private double trackLength = 0;
     private String resolution = "1920x1080";    // Make separate constructor for videos to make unique
+    private boolean usability = false;
 
     // Should call save method in constructors? Opinion seems to be that bad idea
     // Use for audio
-    public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl){
+    public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl, boolean u){
     // Still unsure what creating media items means
     // Considering that we have to manually create them, I think we enter in details
         this.mediaName = n;
@@ -22,9 +23,10 @@ public class MediaItem {
         this.size = s;
         this.fileLocation = fl;
         this.trackLength = tl;
+        this.usability = u;
     }
     // Use for videos
-    public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl, String r){
+    public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl, String r, boolean u){
         this.mediaName = n;
         this.mediaType = t;
         this.format = f;
@@ -33,9 +35,10 @@ public class MediaItem {
         this.fileLocation = fl;
         this.trackLength = tl;
         this.resolution = r;
+        this.usability = u;
     }
     // Use for images
-    public MediaItem(String n, String t, String f, int ID, double s, String fl, String r){
+    public MediaItem(String n, String t, String f, int ID, double s, String fl, String r, boolean u){
         this.mediaName = n;
         this.mediaType = t;
         this.format = f;
@@ -43,6 +46,7 @@ public class MediaItem {
         this.size = s;
         this.fileLocation = fl;
         this.resolution = r;
+        this.usability = u;
     }
 
     public void CreateMediaFileBasic(String fl, String mediaType) throws IOException {
@@ -84,17 +88,35 @@ public class MediaItem {
     public String printAllMediaLibrary(){
         String s1 = "";
 
-        if(this.mediaType == "Image"){
-            s1 = String.format("%s,%s,%s,%o,%.2f(MB),%s\n",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.resolution);
-            return s1;
+        if(mediaType == "Image"){
+            if (usability){
+                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%s,%s,USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.resolution, this.fileLocation);
+                return s1;
+            }
+            else{
+                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%s,%s,NOT USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.resolution, this.fileLocation);
+                return s1;
+            }
         }
         else if (mediaType == "Audio"){
-            s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f\n",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength);
-            return s1;
+            if(usability){
+                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s,USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.fileLocation);
+                return s1;
+            }
+            else{
+                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s,NOT USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.fileLocation);
+                return s1;
+            }
         }
         else if (mediaType == "Video"){
-            s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s\n",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.resolution);
-            return s1;
+            if(usability){
+                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s,%s,USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.resolution, this.fileLocation);
+                return s1;
+            }
+            else{
+                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s,%s,NOT USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.resolution, this.fileLocation);
+                return s1;
+            }
         }
         return null;
     }
