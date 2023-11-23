@@ -1,18 +1,46 @@
+package MediaManagement;
+
 import java.io.*;
 
+/**
+ * Media item class handles creation of media items.
+ * @author Lyle Patterson
+ */
 public class MediaItem {
+    /** Name of media item. */
     private String mediaName = "";
+    /** Type of media item. Either image, audio or video. */
     private String mediaType = "";  // Know mot really need to add values but lecturers might like it???
+    /** Format of media item (e.g., mp3). */
     private String format = "";
+    /** ID to uniquely identify media item. */
     private int itemID = 0;
+    /** Size of media item in megabytes. */
     private double size = 0;
+    /** Specific file location of media item. */
     private String fileLocation = "";
+    /** Track length of audio and video in seconds. */
     private double trackLength = 0;
+    /** Resolution of images and videos. */
     private String resolution = "1920x1080";    // Make separate constructor for videos to make unique
+    /** Describes if file is usable.
+     * Manually created files are not. */
     private boolean usability = false;
 
     // Should call save method in constructors? Opinion seems to be that bad idea
     // Use for audio
+
+    /**
+     * Media item constructor for audio specifically.
+     * @param n item name.
+     * @param t item type.
+     * @param f item format.
+     * @param ID item ID.
+     * @param s item size.
+     * @param fl item file location.
+     * @param tl item track length.
+     * @param u item usability.
+     */
     public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl, boolean u){
     // Still unsure what creating media items means
     // Considering that we have to manually create them, I think we enter in details
@@ -25,7 +53,19 @@ public class MediaItem {
         this.trackLength = tl;
         this.usability = u;
     }
-    // Use for videos
+
+    /**
+     * Media item constructor for video specifically.
+     * @param n item name.
+     * @param t item type.
+     * @param f item format.
+     * @param ID item ID.
+     * @param s item size.
+     * @param fl item file location.
+     * @param tl item track length.
+     * @param r item resolution.
+     * @param u item usability.
+     */
     public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl, String r, boolean u){
         this.mediaName = n;
         this.mediaType = t;
@@ -37,7 +77,18 @@ public class MediaItem {
         this.resolution = r;
         this.usability = u;
     }
-    // Use for images
+
+    /**
+     * Media item constructor for images specifically.
+     * @param n item name.
+     * @param t item type.
+     * @param f item format.
+     * @param ID item ID.
+     * @param s item size.
+     * @param fl item file location.
+     * @param r item resolution.
+     * @param u item usability.
+     */
     public MediaItem(String n, String t, String f, int ID, double s, String fl, String r, boolean u){
         this.mediaName = n;
         this.mediaType = t;
@@ -49,10 +100,26 @@ public class MediaItem {
         this.usability = u;
     }
 
-    public void CreateMediaFileBasic(String fl, String mediaType) throws IOException {
-        RandomAccessFile file = new RandomAccessFile(fl, "rw");
-        // Add try catch or have throws?
-        file.close();
+    /**
+     * Creates a simple 'media file' for information
+     * to be retrieved from.
+     * @param fl the file location of the media file.
+     * @param mediaType the type of the media file.
+     *                  DON't GET HOW THROWS WORK HERE
+     */
+    public void CreateMediaFileBasic(String fl, String mediaType)  {
+        RandomAccessFile file = null;
+        try {
+            file = new RandomAccessFile(fl, "rw");
+            file.close();
+        } catch (FileNotFoundException e) {
+            String s1 = String.format("File at (%s) does not exist!", fl);
+            System.out.println(s1);
+        }
+        catch (IOException e) {
+            String s1 = String.format("File at (%s) was not able to be closed.", fl);
+            System.out.println(s1);
+        }
 
         switch (mediaType){
             case "Image":
@@ -85,6 +152,11 @@ public class MediaItem {
         }
     }
 
+    /**
+     * Creates specifically formatted line of media item information
+     * for the media library file.
+     * @return formatted media item string.
+     */
     public String printAllMediaLibrary(){
         String s1 = "";
 
@@ -188,5 +260,4 @@ public class MediaItem {
     public void setResolution(String resolution) {
         this.resolution = resolution;
     }
-    // Don't forget getters and setters
 }

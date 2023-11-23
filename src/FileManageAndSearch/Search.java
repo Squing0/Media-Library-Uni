@@ -1,34 +1,38 @@
+package FileManageAndSearch;
+
+import MediaManagement.MediaItem;
+import MediaManagement.MediaLibrary;
+
 import javax.imageio.ImageIO;
+import javax.management.InstanceAlreadyExistsException;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
 public class Search {
-    public MediaItem searchLocation(String location){
-
-        // Have 2 if statements, one for videos and audio and one for images
-        String name = "Sunset";
-        String format = "JPG";
-        String type = "Image";
-        long size = 50l;  //In Mb
-        int itemId = 1;
-
-
-        // pretend as though this one is for images
-
-        return new MediaItem(name, type, format, itemId, size, location,"", true);
-    }
-
-    public void importItems(int libraryID){ //Make plural as in items?
-        MediaItem newItem = searchLocation("lol");
-        // Want to add to media library but also don't want to have to instantiate one
-    }
+//    public MediaManagement.MediaItem searchLocation(String location){
+//
+//        // Have 2 if statements, one for videos and audio and one for images
+//        String name = "Sunset";
+//        String format = "JPG";
+//        String type = "Image";
+//        long size = 50l;  //In Mb
+//        int itemId = 1;
+//
+//
+//        // pretend as though this one is for images
+//
+//        return new MediaManagement.MediaItem(name, type, format, itemId, size, location,"", true);
+//    }
+//
+//    public void importItems(int libraryID){ //Make plural as in items?
+//        MediaManagement.MediaItem newItem = searchLocation("lol");
+//        // Want to add to media library but also don't want to have to instantiate one
+//    }
 
     public void typeVerify(String fl) throws IOException, InterruptedException {
         // Use this method to check if image, audio or video and if file type correct before extracting info
@@ -91,55 +95,85 @@ public class Search {
 
     }
 
-    public void searchDirectory(String fd) throws IOException, InterruptedException {
+    public void searchDirectory(String fd) {
         Search search = new Search();
 
         File dir = new File(fd);
         File[] files = dir.listFiles();     // Assumes that there are no sub directories
         for (File file : files){
             System.out.println();
-            search.typeVerify(file.getAbsolutePath().replace("\\", "/"));
+            try {
+                search.typeVerify(file.getAbsolutePath().replace("\\", "/"));
+            }
+            catch (IOException e) {
+                System.out.println("There was an error handling the directory!");   // FIX THIS LATER
+            }
+            catch (InterruptedException e) {
+                System.out.println("IDK");
+            }
         }
     }
 
-    public double getFileSize(String fl) throws IOException {
+    public double getFileSize(String fl) {
         Path path = Paths.get(fl);
-        long bytes = Files.size(path);
+        long bytes = 0;
+
+        try {
+            bytes = Files.size(path);
+        }
+        catch (IOException e) {
+            System.out.println("There was an error handling the file!");
+        }
+
         double kilobytes = bytes / 1024;
         double megabytes = kilobytes / 1024;
 
         return megabytes;
     }
-    public String getImageResolution(String fl) throws IOException {  // Use try and catch and finally clause?
+    public String getImageResolution(String fl)  {  // Use try and catch and finally clause?
         //getting resolution
-        BufferedImage image = ImageIO.read(new File(fl));
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(new File(fl));
+        } catch (IOException e) {
+            System.out.println("There was an error handling the file!");
+        }
         int width = image.getWidth();
         int height = image.getHeight();
         String resolution = width + "x" + height;
 
         return resolution;
         // Creating final file
-//        MediaItem item = new MediaItem(name, type, format, ID, megabytes, fl, resolution);
+//        MediaManagement.MediaItem item = new MediaManagement.MediaItem(name, type, format, ID, megabytes, fl, resolution);
 //        item.printAll();
     }
 
-    public String accessMediaSpecific(String fl) throws IOException, InterruptedException { // awful name lol
+    public String accessMediaSpecific(String fl) { // awful name lol
         String ffprobePath = "ffmpeg-2023-11-13-git-67a2571a55-full_build/bin/ffprobe.exe";
 
         String command = ffprobePath + fl;
 
         ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
-        Process process = processBuilder.start();
+        Process process = null;
+        String ffprobeOutput = "";
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        StringBuilder output = new StringBuilder();
+        try {
+            process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            StringBuilder output = new StringBuilder();
 
-        while((line = reader.readLine()) != null){
-            output.append(line);
+            while((line = reader.readLine()) != null){
+                output.append(line);
+            }
+
+            ffprobeOutput = output.toString();
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("Command failed!");
         }
 
-        String ffprobeOutput = output.toString();
+
         return ffprobeOutput;
     }
     public void searchLibrary(int libraryID){

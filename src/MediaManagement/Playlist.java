@@ -1,12 +1,28 @@
+package MediaManagement;
+
 import java.util.ArrayList;
 
+/**
+ * MediaManagement.Playlist class handles creation of playlists.
+ * @author Lyle Patterson
+ */
 public class Playlist {
+    /** Name of playlist. */
     private String playlistName = "";
+    /** Type of playlist. */
     private String playlistType = "";
+    /** ID used to uniquely identify playlist. */
     private int playlistID = 0;
+    /** Arraylist of Media Item objects */
     private ArrayList<MediaItem> items = new ArrayList<MediaItem>();    // Should I use generics in other places?
-    private int mediaTotal = 0; // Even needed??
+//    private int mediaTotal = 0; // Even needed??
 
+    /**
+     * Constructor assigns playlist information.
+     * @param n playlist name.
+     * @param t playlist type.
+     * @param ID playlist ID.
+     */
     public Playlist(String n, String t, int ID){
         // Need to have either different constructors or if statements to differentiate type here
         this.playlistName = n;
@@ -14,15 +30,32 @@ public class Playlist {
         this.playlistID = ID;
     }
 
+    /**
+     * Empty constructor so that methods can be accessed
+     * without creating a playlist.
+     */
     public Playlist(){  //Not sure if this is good practice but just testing
 
     }
 
+    /**
+     * Deletes a playlist object and clears the arraylist
+     * of media items.
+     * @param ID playlist ID.
+     * @param playlist playlist object.
+     */
     public void deletePlaylist(int ID, Playlist playlist){  // Not sure if the ID is needed for any of these items
         playlist.items.clear();
         playlist = null;
     }
 
+    /**
+     * Adds a media item to a specific playlist within
+     * a media library file.
+     * @param ID playlist ID.
+     * @param item MediaManagement.MediaItem object.
+     * @param libraryLocation location of media library file.
+     */
     public void addMedia(int ID, MediaItem item, String libraryLocation){
         MediaLibrary library = new MediaLibrary();
 
@@ -41,7 +74,11 @@ public class Playlist {
 
     }
 
-
+    /**
+     * Deletes media item from items arraylist.
+     * @param ID MediaManagement.MediaItem ID
+     * @param item MediaManagement.MediaItem object
+     */
     public void deleteMedia(int ID, MediaItem item){
         items.remove(item);
     }
@@ -80,11 +117,11 @@ public class Playlist {
         this.playlistID = playlistID;
     }
 
-    public int getMediaTotal() {
-        return mediaTotal;
-    }
-
-    public void setMediaTotal(int mediaTotal) {
-        this.mediaTotal = mediaTotal;
-    }
+//    public int getMediaTotal() {
+//        return mediaTotal;
+//    }
+//
+//    public void setMediaTotal(int mediaTotal) {
+//        this.mediaTotal = mediaTotal;
+//    }
 }

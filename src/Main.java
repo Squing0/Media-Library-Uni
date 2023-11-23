@@ -1,6 +1,8 @@
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import FileManageAndSearch.FileManager;
+import MediaManagement.MediaItem;
+import MediaManagement.MediaLibrary;
+import MediaManagement.Playlist;
+
 import java.io.IOException;
 
 public class Main {
@@ -26,7 +28,7 @@ public class Main {
 
         Playlist playlist = new Playlist("Vibrations", "Audio", 1);
 
-        String playlistNameDetails = "Playlist, " + playlist.getPlaylistName() + ", " + playlist.getPlaylistType();
+        String playlistNameDetails = "MediaManagement.Playlist, " + playlist.getPlaylistName() + ", " + playlist.getPlaylistType();
 
 //        library.addItemSpecificPoint("Media-Libraries/Seasons2.txt", "Playlists:", playlistNameDetails);
         // Need to get item back from library and build new item for this to work
@@ -39,14 +41,16 @@ public class Main {
         String playlistType = "Audio";
 
 //        if (library.checkPlaylistName(playlistName, playlistType, libraryLocation)){
-//            System.out.println("Playlist name " + playlistName + " of type " + playlistType + " already exists");
+//            System.out.println("MediaManagement.Playlist name " + playlistName + " of type " + playlistType + " already exists");
 //        }
 //        else{
-//            System.out.println("Playlist created!");
+//            System.out.println("MediaManagement.Playlist created!");
 //        }
 
-        library.deleteSpecificLine();
+//        library.deleteSpecificLine("Media-Libraries/Seasons2.txt", "Summer.mp3");
 
+        FileManager fm = new FileManager();
+        fm.openMediaItem("Created-Files/Sample_abc.jpg");
 
 
 
@@ -58,24 +62,24 @@ public class Main {
 //        }
 
 //        library.addItemSpecificPoint("Media-Libraries/Library9.txt", "Spring", item.printAllMediaLibrary());
-//        Search search = new Search();
+//        FileManageAndSearch.Search search = new FileManageAndSearch.Search();
 //        search.typeVerify("C:/Users/lylep/Downloads/file_example_MP4_480_1_5MG.mp4");
 
         //Creating image
 
-//        MediaItem item1 = new MediaItem(name, "Image", format, 1, 50, fileLocation , resolution);
+//        MediaManagement.MediaItem item1 = new MediaManagement.MediaItem(name, "Image", format, 1, 50, fileLocation , resolution);
 //        item1.CreateMediaFileBasic(item1.getFileLocation(), item1.getMediaType());
 
         //Creating Video
-//        MediaItem item2 = new MediaItem(name, mediaType, format, 2, 30, fileLocation, trackLength, resolution);
+//        MediaManagement.MediaItem item2 = new MediaManagement.MediaItem(name, mediaType, format, 2, 30, fileLocation, trackLength, resolution);
 //        item2.CreateMediaFileBasic(item2.getFileLocation(), item2.getMediaType());
 
         // Creating audio
-//        MediaItem item3 = new MediaItem(name, mediaType, format, 2, fileSize, fileLocation, trackLength);
+//        MediaManagement.MediaItem item3 = new MediaManagement.MediaItem(name, mediaType, format, 2, fileSize, fileLocation, trackLength);
 //        item3.CreateMediaFileBasic(item3.getFileLocation(), item3.getMediaType());
 
         //Accessing info from existing files
-//        Search search = new Search();
+//        FileManageAndSearch.Search search = new FileManageAndSearch.Search();
 
         // Accessing an image
 //        String fl = "C:/Users/lylep/Downloads/C4AvqGR2zXrN.gif";
@@ -97,26 +101,26 @@ public class Main {
 //        System.out.println("Absolute path of output" + new File("Created-Files/OHNO.mp3").getAbsolutePath());
 
 
-//        MediaItem item2 = new MediaItem("Winter", "Image", "jpg", 2, 60, "Created-Files/Winter.jpg" ,"120x120", true);
-//        MediaItem item3 = new MediaItem("Summer", "Image", "png", 3, 70, "Created-Files/Summer.png" ,"400x600", true);
-//        MediaItem item4 = new MediaItem("Autumn", "Audio", "mp3", 3, 70, "Created-Files/Autumn.mp3" ,30, true);
-//        MediaItem item5 = new MediaItem("Spring", "Video", "mov", 3, 70, "Created-Files/Spring.mov" ,40,"400x600", true);
+//        MediaManagement.MediaItem item2 = new MediaManagement.MediaItem("Winter", "Image", "jpg", 2, 60, "Created-Files/Winter.jpg" ,"120x120", true);
+//        MediaManagement.MediaItem item3 = new MediaManagement.MediaItem("Summer", "Image", "png", 3, 70, "Created-Files/Summer.png" ,"400x600", true);
+//        MediaManagement.MediaItem item4 = new MediaManagement.MediaItem("Autumn", "Audio", "mp3", 3, 70, "Created-Files/Autumn.mp3" ,30, true);
+//        MediaManagement.MediaItem item5 = new MediaManagement.MediaItem("Spring", "Video", "mov", 3, 70, "Created-Files/Spring.mov" ,40,"400x600", true);
 //
-//        Playlist playlist1 = new Playlist("Random", "Image", 1);
+//        MediaManagement.Playlist playlist1 = new MediaManagement.Playlist("Random", "Image", 1);
 //
 //        playlist1.addMedia(2,item2);
 //        playlist1.addMedia(3,item3);
 //
 //        playlist1.print();
 
-//        MediaLibrary library = new MediaLibrary("Library10", 1, "lol");
+//        MediaManagement.MediaLibrary library = new MediaManagement.MediaLibrary("Library10", 1, "lol");
 //
 //        library.addMediaItem(2,item2);
 //        library.addMediaItem(3,item3);
 //        library.addMediaItem(4,item4);
 //        library.addMediaItem(5,item5);
 
-//        MediaLibrary library = new MediaLibrary();
+//        MediaManagement.MediaLibrary library = new MediaManagement.MediaLibrary();
 //
 //        library.addItemSpecificPoint("Media-Libraries/Library8.txt", "Autumn", "Text to insert");
 

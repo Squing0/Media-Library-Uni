@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import FileManageAndSearch.*;
 
 public class MediaLibraryMain {
+
     private JButton mediaLibraryButton;
     private JPanel panelMain;
     private int[] numbers= {1,2,3,4,5};
@@ -18,16 +20,20 @@ public class MediaLibraryMain {
     mediaLibraryButton.addActionListener(new ActionListener() {
         int count;
         String s1;
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            count++;
-            s1 = String.format("Counts:%d", count);
-            System.out.println(s1);
+//            count++;
+//            s1 = String.format("Counts:%d", count);
+//            System.out.println(s1);
+//
+//            if (count >= 10){
+//                mediaLibraryButton.setText("Ya did it! " + count);
+//                Label1.setText(":)");
+//            }
 
-            if (count >= 10){
-                mediaLibraryButton.setText("Ya did it! " + count);
-                Label1.setText(":)");
-            }
+            FileManager fm = new FileManager();
+            fm.openMediaItem("Created-Files/file_example_MP4_480_1_5MG.mp4");
         }
     });
 
