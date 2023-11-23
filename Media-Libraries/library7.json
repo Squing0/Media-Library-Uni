@@ -1,0 +1,102 @@
+{
+  "libraryName" : "",
+  "libraryID" : 0,
+  "location" : "",
+  "playlists" : [ {
+    "playlistName" : "Seasons",
+    "playlistType" : "Image",
+    "playlistID" : 1,
+    "mediaItems" : [ {
+      "mediaName" : "LOl",
+      "mediaType" : "Audio",
+      "format" : "mp3",
+      "itemID" : 2,
+      "size" : 20.0,
+      "fileLocation" : "Created-Files/file_example_MP4_480_1_5MG.mp4",
+      "trackLength" : 0.0,
+      "resolution" : "1920x1080",
+      "usability" : false
+    }, {
+      "mediaName" : "LOl",
+      "mediaType" : "Image",
+      "format" : "jpg",
+      "itemID" : 2,
+      "size" : 20.0,
+      "fileLocation" : "Created-Files/file_example_MP4_480_1_5MG.mp4",
+      "trackLength" : 0.0,
+      "resolution" : "1920x1080",
+      "usability" : false
+    } ]
+  } ],
+  "mediaItems" : [ {
+    "mediaName" : "file_example_MP4_480_1_5MG",
+    "mediaType" : "Video",
+    "format" : "mp3",
+    "itemID" : 2,
+    "size" : 20.0,
+    "fileLocation" : "Created-Files/file_example_MP4_480_1_5MG.mp4",
+    "trackLength" : 20.0,
+    "resolution" : "1920x1080",
+    "usability" : false
+  }, {
+    "mediaName" : "Lolsers2",
+    "mediaType" : "Image",
+    "format" : "mp3",
+    "itemID" : 1,
+    "size" : 50.0,
+    "fileLocation" : "Created-Files/Lolsers2.mp3",
+    "trackLength" : 0.0,
+    "resolution" : "480x480",
+    "usability" : false
+  }, {
+    "mediaName" : "360_F_82027785_Cl6iuS9TeMD1EUHgPh2ptUYidZpuhjkk",
+    "mediaType" : "Image",
+    "format" : "jpg",
+    "itemID" : 1,
+    "size" : 0.056640625,
+    "fileLocation" : "C:/Users/lylep/Downloads/360_F_82027785_Cl6iuS9TeMD1EUHgPh2ptUYidZpuhjkk.jpg",
+    "trackLength" : 0.0,
+    "resolution" : "724x360",
+    "usability" : true
+  }, {
+    "mediaName" : "0266554465",
+    "mediaType" : "Image",
+    "format" : "jpeg",
+    "itemID" : 1,
+    "size" : 0.052734375,
+    "fileLocation" : "C:/Users/lylep/Downloads/Tester/0266554465.jpeg",
+    "trackLength" : 0.0,
+    "resolution" : "590x393",
+    "usability" : true
+  }, {
+    "mediaName" : "C4AvqGR2zXrN",
+    "mediaType" : "Image",
+    "format" : "gif",
+    "itemID" : 1,
+    "size" : 0.0458984375,
+    "fileLocation" : "C:/Users/lylep/Downloads/Tester/C4AvqGR2zXrN.gif",
+    "trackLength" : 0.0,
+    "resolution" : "625x625",
+    "usability" : true
+  }, {
+    "mediaName" : "file_example_MOV_480_700kB",
+    "mediaType" : "Video",
+    "format" : "mov",
+    "itemID" : 1,
+    "size" : 0.6767578125,
+    "fileLocation" : "C:/Users/lylep/Downloads/Tester/file_example_MOV_480_700kB.mov",
+    "trackLength" : 30.528,
+    "resolution" : "480x270",
+    "usability" : true
+  }, {
+    "mediaName" : "file_example_MP3_2MG",
+    "mediaType" : "Audio",
+    "format" : "mp3",
+    "itemID" : 1,
+    "size" : 2.05859375,
+    "fileLocation" : "C:/Users/lylep/Downloads/Tester/file_example_MP3_2MG.mp3",
+    "trackLength" : 53.942857,
+    "resolution" : "1920x1080",
+    "usability" : true
+  } ]
+}
