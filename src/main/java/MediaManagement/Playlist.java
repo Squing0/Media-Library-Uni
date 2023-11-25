@@ -15,7 +15,11 @@ public class Playlist {
     /** ID used to uniquely identify playlist. */
     private int playlistID = 0;
     /** Arraylist of Media Item objects */
+<<<<<<<< HEAD:src/main/java/MediaManagement/Playlist.java
     private ArrayList<MediaItem> mediaitems = new ArrayList<MediaItem>();    // Should I use generics in other places?
+========
+    private ArrayList<MediaItem> items = new ArrayList<MediaItem>();    // Should I use generics in other places?
+>>>>>>>> ea14f9b7da3440e2d3b759d70e1ad6c069b1f5a3:src/MediaManagement/Playlist.java
 //    private int mediaTotal = 0; // Even needed??
 
     /**
@@ -118,7 +122,17 @@ public class Playlist {
         this.playlistID = playlistID;
     }
 
+<<<<<<<< HEAD:src/main/java/MediaManagement/Playlist.java
     public List<MediaItem> getMediaItems(){
         return mediaitems;
     }
+========
+//    public int getMediaTotal() {
+//        return mediaTotal;
+//    }
+//
+//    public void setMediaTotal(int mediaTotal) {
+//        this.mediaTotal = mediaTotal;
+//    }
+>>>>>>>> ea14f9b7da3440e2d3b759d70e1ad6c069b1f5a3:src/MediaManagement/Playlist.java
 }

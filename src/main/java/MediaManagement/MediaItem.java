@@ -100,11 +100,14 @@ public class MediaItem {
         this.usability = u;
     }
 
+<<<<<<<< HEAD:src/main/java/MediaManagement/MediaItem.java
     // NEED EMPTY CONSTRUCTOR FOR JACKSON
     public MediaItem(){
 
     }
 
+========
+>>>>>>>> ea14f9b7da3440e2d3b759d70e1ad6c069b1f5a3:src/MediaManagement/MediaItem.java
     /**
      * Creates a simple 'media file' for information
      * to be retrieved from.
@@ -265,6 +268,9 @@ public class MediaItem {
     public void setResolution(String resolution) {
         this.resolution = resolution;
     }
+<<<<<<<< HEAD:src/main/java/MediaManagement/MediaItem.java
     public boolean getUsability(){return usability;};
+========
+>>>>>>>> ea14f9b7da3440e2d3b759d70e1ad6c069b1f5a3:src/MediaManagement/MediaItem.java
 }
 
