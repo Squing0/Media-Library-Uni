@@ -122,17 +122,8 @@ public class Playlist {
         this.playlistID = playlistID;
     }
 
-<<<<<<<< HEAD:src/main/java/MediaManagement/Playlist.java
+
     public List<MediaItem> getMediaItems(){
         return mediaitems;
     }
-========
-//    public int getMediaTotal() {
-//        return mediaTotal;
-//    }
-//
-//    public void setMediaTotal(int mediaTotal) {
-//        this.mediaTotal = mediaTotal;
-//    }
->>>>>>>> ea14f9b7da3440e2d3b759d70e1ad6c069b1f5a3:src/MediaManagement/Playlist.java
 }
