@@ -15,11 +15,8 @@ public class Playlist {
     /** ID used to uniquely identify playlist. */
     private int playlistID = 0;
     /** Arraylist of Media Item objects */
-<<<<<<<< HEAD:src/main/java/MediaManagement/Playlist.java
     private ArrayList<MediaItem> mediaitems = new ArrayList<MediaItem>();    // Should I use generics in other places?
-========
     private ArrayList<MediaItem> items = new ArrayList<MediaItem>();    // Should I use generics in other places?
->>>>>>>> ea14f9b7da3440e2d3b759d70e1ad6c069b1f5a3:src/MediaManagement/Playlist.java
 //    private int mediaTotal = 0; // Even needed??
 
     /**
