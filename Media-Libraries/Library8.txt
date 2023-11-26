@@ -1,6 +1,0 @@
-Autumn,Image,png,3,70.00(MB),400x600
-Text to insert
-Autumn,Audio,mp3,3,70.00(MB),30.00
-Text to insert
-Spring,Video,mov,3,70.00(MB),40.00,400x600
-Text to insert

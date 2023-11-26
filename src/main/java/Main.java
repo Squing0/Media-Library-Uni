@@ -54,14 +54,16 @@ public class Main {
 //        fm.openMediaItem("Created-Files/Sample_abc.jpg");
         MediaItem item5 = new MediaItem("file_example_MP4_480_1_5M", "Video", "mp3", 2, 20, "Created-Files/file_example_MP4_480_1_5MG.mp4", 20, "1920x1080", false);
         MediaItem item6 = new MediaItem("LOl", "Audio", "mp3", 2, 20, "Created-Files/file_example_MP4_480_1_5MG.mp4", "1920x1080", false);
-        MediaItem item7 = new MediaItem("LOl", "Image", "jpg", 2, 20, "Created-Files/file_example_MP4_480_1_5MG.mp4", "1920x1080", false);
+        MediaItem item7 = new MediaItem("LOl", "Audio", "jpg", 2, 20, "Created-Files/file_example_MP4_480_1_5MG.mp4", "1920x1080", false);
 
         Playlist playlist5 = new Playlist("Numbers", "Audio", 2);
         String fl = "Media-Libraries/library7.json";
 
-        Search search = new Search();
+        library.addItemPlaylist(fl, "Vibrations", "Audio", item7);
 
-        search.searchDirectory("C:/Users/lylep/Downloads/Tester", fl);
+//        Search search = new Search();
+//
+//        search.searchDirectory("C:/Users/lylep/Downloads/Tester", fl);
 //        library.addMedia(fl, item5);
 //        library.addItemPlaylist(fl, "Seasons", "Image", item6);
 //        library.deleteItemPlaylist(fl, "Seasons", "Image", "file_example_MP4_480_1_5MG", "mp3");

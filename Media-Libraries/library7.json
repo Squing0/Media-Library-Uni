@@ -27,6 +27,21 @@
       "resolution" : "1920x1080",
       "usability" : false
     } ]
+  }, {
+    "playlistName" : "Vibrations",
+    "playlistType" : "Audio",
+    "playlistID" : 1,
+    "mediaItems" : [ {
+      "mediaName" : "LOl",
+      "mediaType" : "Audio",
+      "format" : "jpg",
+      "itemID" : 2,
+      "size" : 20.0,
+      "fileLocation" : "Created-Files/file_example_MP4_480_1_5MG.mp4",
+      "trackLength" : 0.0,
+      "resolution" : "1920x1080",
+      "usability" : false
+    } ]
   } ],
   "mediaItems" : [ {
     "mediaName" : "file_example_MP4_480_1_5MG",
