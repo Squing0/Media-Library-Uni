@@ -135,7 +135,7 @@ public class LibraryPage extends JFrame {
 
         JPanel leftPanel = new JPanel();
         leftPanel.setBackground(Color.MAGENTA);
-        leftPanel.setPreferredSize(new Dimension(200,100));
+        leftPanel.setPreferredSize(new Dimension(220,100));
 
         leftPanel.setLayout(new GridLayout(5,0,0,10));
 
