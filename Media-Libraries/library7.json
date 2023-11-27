@@ -8,16 +8,6 @@
     "playlistID" : 1,
     "mediaItems" : [ {
       "mediaName" : "LOl",
-      "mediaType" : "Audio",
-      "format" : "mp3",
-      "itemID" : 2,
-      "size" : 20.0,
-      "fileLocation" : "Created-Files/file_example_MP4_480_1_5MG.mp4",
-      "trackLength" : 0.0,
-      "resolution" : "1920x1080",
-      "usability" : false
-    }, {
-      "mediaName" : "LOl",
       "mediaType" : "Image",
       "format" : "jpg",
       "itemID" : 2,
