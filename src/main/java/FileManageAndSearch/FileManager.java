@@ -1,17 +1,70 @@
 package FileManageAndSearch;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.nio.file.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import GUI.*;
 
-public class FileManager {
+public class FileManager implements Runnable{
     private String folderLocation = "";
+    private FileObserver observer;
 
-    public void watchFolder(int libraryID){
+    public FileManager(FileObserver o){
+        this.observer = o;
+    }
+
+    public FileManager(){
 
     }
-    public void importToLibrary(int libraryID){
+    public void watchFolder() throws IOException {
+
+        try {
+            Path dir = Paths.get(folderLocation);
+
+            WatchService ws = FileSystems.getDefault().newWatchService();
+
+            dir.register(ws, StandardWatchEventKinds.ENTRY_CREATE);
+
+            while (true) {
+                WatchKey key = null;
+                try {
+                    key = ws.take();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
+                        Path createdFilePath = dir.resolve((Path) event.context());
+                        SwingUtilities.invokeLater(() -> {
+                            System.out.println("File created!");
+                        });
+
+                        Search search = new Search();
+                        search.typeVerify(createdFilePath.toString().replace("\\", "/"), "Media-Libraries/library7.json");
+
+                        observer.onFileCreated(createdFilePath);
+                    }
+                }
+
+                boolean valid = key.reset();
+                if(!valid){
+                    break;
+                }
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+    public void importToLibrary(){
 
     }
     public void openMediaItem(String fl){
@@ -49,5 +102,14 @@ public class FileManager {
 
     public void setFolderLocation(String folderLocation) {
         this.folderLocation = folderLocation;
+    }
+
+    @Override
+    public void run() {
+        try {
+            watchFolder();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

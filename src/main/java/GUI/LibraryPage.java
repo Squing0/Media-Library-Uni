@@ -7,15 +7,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class LibraryPage extends JFrame{
-    MediaLibrary library = new MediaLibrary();
+public class LibraryPage extends JFrame implements FileObserver {
+    private MediaLibrary library = new MediaLibrary();
+    private FileManager fm = new FileManager();
+    private Thread watchThread;
     private JLabel label = new JLabel("Hello!");
     private JButton backToMain;
     private String libraryPath;
@@ -85,6 +86,7 @@ public class LibraryPage extends JFrame{
         openMediaItem.addActionListener(e -> openItem());
         importFolder.addActionListener(e -> openFolder());
         deleteMediaItem.addActionListener(e -> deleteitemList());
+        folderWatch.addActionListener(e -> setFolder());
 
         createPlaylist.addActionListener(e -> createPlaylist());
         deletePlaylist.addActionListener(e -> deletePlaylist());
@@ -313,7 +315,35 @@ public class LibraryPage extends JFrame{
         this.setSize(1000,600);
         this.setVisible(true);
 
+        fm = new FileManager(this::onFileCreated);
+        watchThread = new Thread(fm);
+        watchThread.start();
+
         loadData();
+    }
+
+    public void setFolder() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setCurrentDirectory(new File("."));
+
+        int response = fileChooser.showOpenDialog(null);
+        String path = "";
+
+        if(response == JFileChooser.APPROVE_OPTION){
+           path = fileChooser.getSelectedFile().getAbsolutePath().replace("\\", "/");
+           fm.setFolderLocation(path);
+        }
+
+//        if(watchThread != null){
+//            watchThread.interrupt();
+//        }
+//
+//        fm = new FileManager(path, this::onFileCreated);
+//        watchThread = new Thread(fm);
+//        watchThread.start();
+
+
     }
 
     public void checkItemType() {
@@ -403,7 +433,7 @@ public class LibraryPage extends JFrame{
             library.deleteMediaItem(libraryPath, item.getMediaName(), item.getFormat());    // Look for more efficient way
 
             if(item.getUsability() == false){
-                FileManager fm = new FileManager();
+                fm = new FileManager();
                 fm.deleteFile("Created-Files", item.getMediaName() + "." + item.getFormat());
             }
             JOptionPane.showMessageDialog(null, item.getMediaName() + " deleted!", "Success!", JOptionPane.INFORMATION_MESSAGE);
@@ -596,7 +626,7 @@ public class LibraryPage extends JFrame{
     }
 
     public void openItem() {
-        FileManager fm = new FileManager();
+        fm = new FileManager();
 
         int selectedIndex = mediaItemsList.getSelectedIndex();
 
@@ -619,7 +649,7 @@ public class LibraryPage extends JFrame{
     }
 
     public void openPlaylistItem() {
-        FileManager fm = new FileManager();
+        fm = new FileManager();
 
         int selectedIndex = playlistItemsList.getSelectedIndex();
 
@@ -669,6 +699,21 @@ public class LibraryPage extends JFrame{
             updatePlaylists(getPlaylists());
         }
 
+    }
+
+    public void onFileCreated(Path fl){
+        SwingUtilities.invokeLater(() -> {
+            loadData();
+        });
+    }
+
+    public void loadMedia(){
+        library = new MediaLibrary();
+        library = library.getLibraryFromJson(libraryPath);
+
+        if(library.getMediaItems() != null){
+            updateMediaItems(getMediaItems());
+        }
     }
 
     public void updateMediaItems(List<MediaItem> items){
