@@ -9,15 +9,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class LibraryPage extends JFrame{
+    MediaLibrary library = new MediaLibrary();
     private JLabel label = new JLabel("Hello!");
     private JButton backToMain;
     private String libraryPath;
-    private JButton manualMediaItem;
     private JButton importFolder;
     private JButton folderWatch;
     private JButton deleteMediaItem;
@@ -27,6 +28,7 @@ public class LibraryPage extends JFrame{
     private JButton addPlaylistItem;
     private JButton removePlaylistItem;
     private JButton openMediaItem;
+    private JButton openPlaylistItem;
     private JScrollPane mediaItems;
     private JList mediaItemsList;
     private DefaultListModel<String> mediaItemsModel;
@@ -63,10 +65,10 @@ public class LibraryPage extends JFrame{
 //        label.setBounds(0,0,200,50);
 //        this.add(label);
 
-        JLabel title = new JLabel("Library: " + libraryPath);
+        String clickDesc = "    Double click items to see more details";
+        JLabel title = new JLabel("Library: " + libraryPath + clickDesc);
 
         // Defining buttons:
-        manualMediaItem = new JButton("Manually create media item");    //remove later
         importFolder = new JButton("Import media files from folder");
         folderWatch = new JButton("Select folder to be watched");
         deleteMediaItem = new JButton("Delete media item");
@@ -77,11 +79,18 @@ public class LibraryPage extends JFrame{
         deletePlaylist = new JButton("Delete Playlist");
         addPlaylistItem = new JButton("Add item to playlist");
         removePlaylistItem = new JButton("Remove item from playlist");
+        openPlaylistItem = new JButton("Open playlist item");
 
         //Adding action listeners for buttons (sort in same order as above)
         openMediaItem.addActionListener(e -> openItem());
         importFolder.addActionListener(e -> openFolder());
         deleteMediaItem.addActionListener(e -> deleteitemList());
+
+        createPlaylist.addActionListener(e -> createPlaylist());
+        deletePlaylist.addActionListener(e -> deletePlaylist());
+        addPlaylistItem.addActionListener(e -> addItemPlaylistList());
+        removePlaylistItem.addActionListener(e -> removePlaylistItemList());
+        openPlaylistItem.addActionListener(e -> openPlaylistItem());
 
         // Tabbed pane
         createitemPane = new JTabbedPane();
@@ -209,6 +218,26 @@ public class LibraryPage extends JFrame{
         playlistItemsList = new JList<>(playlistItemsModel);
         playlistItems = new JScrollPane(playlistItemsList);
 
+        playlistItemsList.addMouseListener(new MouseAdapter() { //Exact same code as above
+            @Override
+            public void mouseClicked(MouseEvent e){
+                if(e.getClickCount() == 2){
+                    JList<String> list = (JList<String>) e.getSource();
+
+                    int selectedIndex = list.getSelectedIndex();
+                    String selectedItem = list.getModel().getElementAt(selectedIndex);
+
+                    MediaItem item = getMediaItemFromList(selectedItem);
+                    String details = item.printAllMediaLibrary();
+
+                    JOptionPane.showMessageDialog(null, details, "Success!", JOptionPane.INFORMATION_MESSAGE);
+
+                    System.out.println(item.getMediaName());
+
+                }
+            }
+        });
+
 
         JLabel playlistItemsHeading = new JLabel("Playlist Items:");
         playlistItems.setColumnHeaderView(playlistItemsHeading);
@@ -242,26 +271,27 @@ public class LibraryPage extends JFrame{
         rightPanel.setBackground(Color.GREEN);
         rightPanel.setPreferredSize(new Dimension(200,100));
 
-        rightPanel.setLayout(new GridLayout(5,0,0,10));
+        rightPanel.setLayout(new GridLayout(6,0,0,10));
 
         rightPanel.add(createPlaylist);
         rightPanel.add(deletePlaylist);
         rightPanel.add(new JLabel("")); // Made so can add empty cell
         rightPanel.add(addPlaylistItem);
         rightPanel.add(removePlaylistItem);
+        rightPanel.add(openPlaylistItem);
 
         JPanel leftPanel = new JPanel();
         leftPanel.setBackground(Color.MAGENTA);
         leftPanel.setPreferredSize(new Dimension(220,100));
 
-        leftPanel.setLayout(new GridLayout(6,0,0,10));
+        leftPanel.setLayout(new GridLayout(5,0,0,10));
 
-        leftPanel.add(manualMediaItem);
-        leftPanel.add(importFolder);
-        leftPanel.add(folderWatch);
+        leftPanel.add(openMediaItem);
         leftPanel.add(deleteMediaItem);
         leftPanel.add(searchMediaItem);
-        leftPanel.add(openMediaItem);
+        leftPanel.add(importFolder);
+        leftPanel.add(folderWatch);
+
 
         JPanel topPanel = new JPanel();
         topPanel.setBackground(Color.PINK);
@@ -346,7 +376,7 @@ public class LibraryPage extends JFrame{
 
             MediaItem item = new MediaItem(name, type, format, ID, size, fl, trackLength, resolution, use);
 
-            MediaLibrary library = new MediaLibrary();
+            library = new MediaLibrary();
             library.addMedia(libraryPath, item);
             item.createMediaFileBasic(fl, type);
 
@@ -361,7 +391,7 @@ public class LibraryPage extends JFrame{
     }
 
     public void deleteitemList() {
-        MediaLibrary library = new MediaLibrary();
+        library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
         int selectedIndex = mediaItemsList.getSelectedIndex();
@@ -376,7 +406,7 @@ public class LibraryPage extends JFrame{
                 FileManager fm = new FileManager();
                 fm.deleteFile("Created-Files", item.getMediaName() + "." + item.getFormat());
             }
-            JOptionPane.showMessageDialog(null, item.getMediaName() + " deleted!", "Success!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, item.getMediaName() + " deleted!", "Success!", JOptionPane.INFORMATION_MESSAGE);
 
             loadData();
         }
@@ -384,6 +414,105 @@ public class LibraryPage extends JFrame{
             JOptionPane.showMessageDialog(null, "No media item selected", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    public void createPlaylist(){   // name too similar to component
+        String name = JOptionPane.showInputDialog("What is your playlist name?: ");
+                String[] responses = {"Image", "Audio", "Video"};
+        String type = "";
+
+        int index = JOptionPane.showOptionDialog(null,
+                "Playlist type:",
+                "Enter details",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                responses,
+                0);
+
+        if(index == 0){
+            type = "Image";
+        }
+        else if(index == 1){
+            type = "Audio";
+        }
+        else if(index == 2){
+            type = "Video";
+        }
+
+        Playlist playlist = new Playlist(name, type, 1);
+        library = new MediaLibrary();
+        library.addPlaylist(libraryPath, playlist);
+
+        loadData();
+    }
+
+    public void deletePlaylist(){
+        String specificPlaylist = (String) playlists.getSelectedItem();
+        String nameAndType[] = specificPlaylist.split(",");
+        String name = nameAndType[0];
+        String type = nameAndType[1].trim();
+
+        library = new MediaLibrary();
+        library.deletePlaylist(libraryPath, name, type);
+
+        JOptionPane.showMessageDialog(null, name + " deleted!", "Success!", JOptionPane.INFORMATION_MESSAGE);
+
+        loadData();
+    }
+
+    public void addItemPlaylistList(){
+        String specificPlaylist = (String) playlists.getSelectedItem();
+        String nameAndType[] = specificPlaylist.split(",");
+        String name = nameAndType[0];
+        String type = nameAndType[1].trim();
+
+        int selectedIndex = mediaItemsList.getSelectedIndex();
+
+        if(selectedIndex != -1){
+            String itemInfo = mediaItemsModel.getElementAt(selectedIndex);
+            MediaItem item = getMediaItemFromList(itemInfo);
+
+            library = new MediaLibrary();
+
+            try {
+                library.addItemPlaylist(libraryPath, name, type, item);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            loadData();
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "No playlist item selected", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void removePlaylistItemList() {
+        int selectedIndex = playlistItemsList.getSelectedIndex();
+
+        if(selectedIndex != -1){
+            String itemInfo = playlistItemsModel.getElementAt(selectedIndex);
+            String nameAndFormat[] = itemInfo.split(",");
+            String itemName = nameAndFormat[0];
+            String itemFormat = nameAndFormat[2].trim();
+
+
+            String specificPlaylist = (String) playlists.getSelectedItem();
+            String nameAndType[] = specificPlaylist.split(",");
+            String playlistName = nameAndType[0];
+            String playlistType = nameAndType[1].trim();
+
+
+            library = new MediaLibrary();
+            library.deleteItemPlaylist(libraryPath, playlistName, playlistType, itemName, itemFormat);
+
+            loadData();
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "No playlist item selected", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public boolean checkItemEntered(){
         boolean nameNotEntered = nameEnter.getText().isEmpty();
         boolean sizeNotEntered = sizeEnter.getText().isEmpty();
@@ -436,7 +565,7 @@ public class LibraryPage extends JFrame{
 
     public void openFolder() {
         Search search = new Search();
-        MediaLibrary library = new MediaLibrary();
+        library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
         String dirPath = "";
 
@@ -456,7 +585,7 @@ public class LibraryPage extends JFrame{
     }
 
     public MediaItem getMediaItemFromList(String info){
-        MediaLibrary library = new MediaLibrary();
+        library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
         String nameAndFormat[] = info.split(",");
@@ -489,32 +618,56 @@ public class LibraryPage extends JFrame{
         }
     }
 
+    public void openPlaylistItem() {
+        FileManager fm = new FileManager();
+
+        int selectedIndex = playlistItemsList.getSelectedIndex();
+
+        if(selectedIndex != -1){
+            String itemInfo = playlistItemsModel.getElementAt(selectedIndex);
+
+            MediaItem item = getMediaItemFromList(itemInfo);
+
+            if(item.getUsability() == false){
+                JOptionPane.showMessageDialog(null, "File isn't usable as was manually created!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String path = item.getFileLocation();
+            fm.openMediaItem(path);
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "No playlist item selected", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
 
 
     public void loadplaylistItems() {
         String specificPlaylist = (String) playlists.getSelectedItem();
 
-       String nameAndType[] = specificPlaylist.split(",");
-       String name = nameAndType[0];
-       String type = nameAndType[1].trim();
-
         if(specificPlaylist != null){
+            String nameAndType[] = specificPlaylist.split(",");
+            String name = nameAndType[0];
+            String type = nameAndType[1].trim();
+
             updatePlaylistItems(getPlaylistItems(name, type));
         }
     }
 
     public void loadData(){
-        MediaLibrary library = new MediaLibrary();
+        library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
         if(library.getMediaItems() != null){
             updateMediaItems(getMediaItems());
         }
+
+        playlistItemsModel.clear();
+
         if(library.getPlaylists() != null){
             updatePlaylists(getPlaylists());
         }
-//       updatePlaylistItems(getPlaylistItems());
 
     }
 
@@ -529,16 +682,13 @@ public class LibraryPage extends JFrame{
     public List<MediaItem> getMediaItems(){
         List<MediaItem> items = new ArrayList<>();
 
-        MediaLibrary library = new MediaLibrary();
-        library = library.getLibraryFromJson(libraryPath);
-
         items = library.getMediaItems();
         return items;
     }
 
     public void updatePlaylists(List<Playlist> playlists){
 //        playlistComboBoxModel.clear();
-        // Need to somehow clear model here
+        playlistsModel.removeAllElements();
             for(Playlist playlist : playlists){
                 playlistsModel.addElement(playlist.getPlaylistName() + ", " + playlist.getPlaylistType());
             }
@@ -548,9 +698,6 @@ public class LibraryPage extends JFrame{
     public List<Playlist> getPlaylists(){
         List<Playlist> playlists = new ArrayList<>();
 
-        MediaLibrary library = new MediaLibrary();
-        library = library.getLibraryFromJson(libraryPath);
-
         playlists = library.getPlaylists();
         return playlists;
     }
@@ -558,16 +705,16 @@ public class LibraryPage extends JFrame{
 
     public void updatePlaylistItems(List<MediaItem> playlistItems){
         playlistItemsModel.clear();
-        for(MediaItem item : playlistItems){
-            playlistItemsModel.addElement(item.getMediaName() + ", " + item.getMediaType() + ", " + item.getFormat());
+
+        if(playlistItems != null){
+            for(MediaItem item : playlistItems){
+                playlistItemsModel.addElement(item.getMediaName() + ", " + item.getMediaType() + ", " + item.getFormat());
+            }
         }
     }
 
     public List<MediaItem> getPlaylistItems(String name, String type){
         List<MediaItem> playlistItems = new ArrayList<>();
-
-        MediaLibrary library = new MediaLibrary();
-        library = library.getLibraryFromJson(libraryPath);
 
         Playlist specific = library.findPlaylist(library, name, type);
         playlistItems = specific.getMediaItems();
