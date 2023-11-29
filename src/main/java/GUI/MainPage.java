@@ -1,5 +1,6 @@
 package GUI;
 
+import FileManageAndSearch.FileManager;
 import MediaManagement.MediaLibrary;
 
 import javax.swing.*;
@@ -296,7 +297,8 @@ int count = 0;
             String specificLibrary = mediaLibraryModel.getElementAt(selectedIndex);
 
             mediaLibraryModel.remove(selectedIndex);
-            deleteLibraryFile(specificLibrary);
+            FileManager fm = new FileManager();
+            fm.deleteFile(librariesLocation, specificLibrary);
 
             JOptionPane.showMessageDialog(null, "Deleted: " + specificLibrary, "Item deleted", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -306,7 +308,7 @@ int count = 0;
 
     }
 
-    public void deleteLibraryFile(String libraryFile){
+    public void deleteLibraryFile(String libraryFile){  // put in different class
         File dir = new File(librariesLocation);
         File[] files = dir.listFiles();
         String path;
@@ -318,9 +320,11 @@ int count = 0;
             }
         }
     }
+
+
     public void openFile() {
         JFileChooser fileChooser = new JFileChooser();
-//        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         // Use above line if want to directories, exact same code
 
         fileChooser.setCurrentDirectory(new File("."));

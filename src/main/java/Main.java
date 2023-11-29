@@ -59,7 +59,8 @@ public class Main {
         Playlist playlist5 = new Playlist("Numbers", "Audio", 2);
         String fl = "Media-Libraries/library7.json";
 
-        library.addItemPlaylist(fl, "Vibrations", "Audio", item7);
+//        library.addItemPlaylist(fl, "Vibrations", "Audio", item7);
+
 
 //        Search search = new Search();
 //

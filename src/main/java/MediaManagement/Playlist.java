@@ -85,12 +85,7 @@ public class Playlist {
         mediaitems.remove(item);
     }
 
-    public void print(){
-        for(int i =0; i < mediaitems.size(); i++){
-            mediaitems.get(i).printAll();
-            System.out.println();
-        }
-    }
+
 
 
 

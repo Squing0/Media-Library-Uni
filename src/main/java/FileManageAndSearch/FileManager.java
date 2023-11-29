@@ -29,6 +29,18 @@ public class FileManager {
         }
     }
 
+    public void deleteFile(String folderLocation, String fileName){  // put in different class
+        File dir = new File(folderLocation);
+        File[] files = dir.listFiles();
+        String path;
+
+        for(File file: files){
+            path = file.getAbsolutePath().replace("\\", "/");
+            if (path.endsWith(fileName)){
+                file.delete();
+            }
+        }
+    }
 
     // Remove which ones aren't used
     public String getFolderLocation() {

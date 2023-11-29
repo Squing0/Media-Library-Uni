@@ -1,5 +1,6 @@
 package MediaManagement;
 
+import FileManageAndSearch.Search;
 import MediaManagement.MediaItem;
 import MediaManagement.Playlist;
 

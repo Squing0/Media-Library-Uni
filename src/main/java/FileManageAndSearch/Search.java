@@ -48,7 +48,7 @@ public class Search {
         String format = dots[dots.length - 1];    // Make method???
 
         // Checking file format (also finds type)
-        List<String> imageFormats = Arrays.asList("jpg","jpeg","png","gif");
+        List<String> imageFormats = Arrays.asList("jpeg","png","gif");
         List<String> audioFormats = Arrays.asList("mp3", "aac", "wav");
         List<String> videoFormats = Arrays.asList("mp4", "mkv", "mov");
 
@@ -58,8 +58,9 @@ public class Search {
         String resolution;
         double duration;
 
-        String resolutionCheck = " -i " + itemFl + " -show_entries stream=width,height -v quiet -of csv=p=0";
-        String durationCheck = " -i " + itemFl + " -show_entries format=duration -v quiet -of csv=p=0";
+        String resolutionCheck = " -i \"" + itemFl + "\" -show_entries stream=width,height -v quiet -of csv=p=0";
+        String durationCheck = " -i \"" + itemFl + "\" -show_entries format=duration -v quiet -of csv=p=0";
+        // " -i \"" + itemFl + "\" -show_entries format=duration -v quiet -of csv=p=0"; (try this if having problems)
 
         MediaLibrary library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryFl);
@@ -74,24 +75,23 @@ public class Search {
             else if(audioFormats.contains(format.toLowerCase())){
                 type = "Audio";
                 duration = Double.parseDouble(accessMediaSpecific(durationCheck));  // Need to parse back to double as string is returned
-                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl,duration, true);
+                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl,duration,"No resolution", true);
                 library.addMedia(libraryFl, item);
             }
             else if(videoFormats.contains(format.toLowerCase())){
                 type = "Video";
-                duration = Double.parseDouble(accessMediaSpecific(durationCheck));
+                duration = Double.parseDouble(accessMediaSpecific(durationCheck));  // Need to parse back to double as string is returned
                 resolution = accessMediaSpecific(resolutionCheck);
                 MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl, duration, resolution.replace(",","x"), true);
                 library.addMedia(libraryFl, item);
             }
             else{
-                System.out.println("File is either not a media file or has unsupported file type!");
+                    System.out.println(nameAndFormat + "File is either not a media file or has unsupported file type!");
             }
         }
         else{
-            System.out.println("File with that name and format already exists!");
+                System.out.println("File with that name and format already exists!");
         }
-
     }
 
     public void searchDirectory(String fd, String libraryFl) {
@@ -139,20 +139,24 @@ public class Search {
         } catch (IOException e) {
             System.out.println("There was an error handling the file!");
         }
-        int width = image.getWidth();
+
         int height = image.getHeight();
-        String resolution = width + "x" + height;
+        int width = image.getWidth();
+
+        String resolution = height + "x" + width;
 
         return resolution;
+
+
         // Creating final file
 //        MediaManagement.MediaItem item = new MediaManagement.MediaItem(name, type, format, ID, megabytes, fl, resolution);
 //        item.printAll();
     }
 
-    public String accessMediaSpecific(String fl) { // awful name lol
+    public String accessMediaSpecific(String action) { // awful name lol
         String ffprobePath = "ffmpeg-2023-11-13-git-67a2571a55-full_build/bin/ffprobe.exe";
 
-        String command = ffprobePath + fl;
+        String command = ffprobePath + action;
 
         ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
         Process process = null;
@@ -175,7 +179,7 @@ public class Search {
         }
 
 
-        return ffprobeOutput;
+       return ffprobeOutput;
     }
     public void searchLibrary(int libraryID){
         // need to have if statements for name, format, type, size, ID

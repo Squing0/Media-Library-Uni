@@ -112,7 +112,7 @@ public class MediaItem {
      * @param mediaType the type of the media file.
      *                  DON't GET HOW THROWS WORK HERE
      */
-    public void CreateMediaFileBasic(String fl, String mediaType)  {
+    public void createMediaFileBasic(String fl, String mediaType)  {
         RandomAccessFile file = null;
         try {
             file = new RandomAccessFile(fl, "rw");
@@ -139,24 +139,6 @@ public class MediaItem {
         // REMEMBER TO LET USER KNOW THAT THESE CANNOT BE OPENED
     }
 
-    public void printAll(){
-        // Purely to test accessing info
-        String s1 = "";
-
-        if(this.mediaType == "Image"){
-            s1 = String.format("Name: %s\n Type: %s\nFormat: %s\nID: %o\nSize: %.2f(MB)\nResolution: %s",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.resolution);
-            System.out.println(s1);
-        }
-        else if (mediaType == "Audio"){
-            s1 = String.format("Name: %s\n Type: %s\nFormat: %s\nID: %o\nSize: %.2f(MB)\nDuration: %.2f Seconds",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength);
-            System.out.println(s1);
-        }
-        else if (mediaType == "Video"){
-            s1 = String.format("Name: %s\n Type: %s\nFormat: %s\nID: %o\nSize: %.2f(MB)\nDuration: %.2f Seconds\nResolution: %s",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.resolution);
-            System.out.println(s1);
-        }
-    }
-
     /**
      * Creates specifically formatted line of media item information
      * for the media library file.
@@ -164,38 +146,19 @@ public class MediaItem {
      */
     public String printAllMediaLibrary(){
         String s1 = "";
+        String use = "";
+        if(usability == false){
+            use = "NOT USABLE";
+        }
+        else{
+            use = "USABLE";
+        }
 
-        if(mediaType == "Image"){
-            if (usability){
-                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%s,%s,USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.resolution, this.fileLocation);
-                return s1;
-            }
-            else{
-                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%s,%s,NOT USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.resolution, this.fileLocation);
-                return s1;
-            }
-        }
-        else if (mediaType == "Audio"){
-            if(usability){
-                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s,USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.fileLocation);
-                return s1;
-            }
-            else{
-                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s,NOT USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.fileLocation);
-                return s1;
-            }
-        }
-        else if (mediaType == "Video"){
-            if(usability){
-                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s,%s,USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.resolution, this.fileLocation);
-                return s1;
-            }
-            else{
-                s1 = String.format("%s,%s,%s,%o,%.2f(MB),%.2f,%s,%s,NOT USABLE",this.mediaName, this.mediaType, this.format, this.itemID, this.size, this.trackLength, this.resolution, this.fileLocation);
-                return s1;
-            }
-        }
-        return null;
+        s1 = String.format("%s\n%s\n%s\n%o\n%.2f(MB)\n%.2f seconds\n%s\n%s\n%s",
+                this.mediaName, this.mediaType, this.format, this.itemID,
+                this.size, this.trackLength, this.resolution, this.fileLocation, use);
+        return s1;
+
     }
     public void delete(int ID){
         // Use for either deleting media item or deleting media item and file if item was manually made?

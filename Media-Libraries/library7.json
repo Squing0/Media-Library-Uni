@@ -103,5 +103,85 @@
     "trackLength" : 53.942857,
     "resolution" : "1920x1080",
     "usability" : true
+  }, {
+    "mediaName" : "sample_640×426",
+    "mediaType" : "Image",
+    "format" : "jpeg",
+    "itemID" : 1,
+    "size" : 0.083984375,
+    "fileLocation" : "C:/Users/lylep/Downloads/New folder (2)/sample_640×426.jpeg",
+    "trackLength" : 0.0,
+    "resolution" : "426x640",
+    "usability" : true
+  }, {
+    "mediaName" : "Free_Test_Data_100KB_MP3",
+    "mediaType" : "Audio",
+    "format" : "mp3",
+    "itemID" : 1,
+    "size" : 0.09765625,
+    "fileLocation" : "C:/Users/lylep/Downloads/New-folder-(2)/Free_Test_Data_100KB_MP3.mp3",
+    "trackLength" : 3.996735,
+    "resolution" : "",
+    "usability" : true
+  }, {
+    "mediaName" : "video (240p)",
+    "mediaType" : "Video",
+    "format" : "mp4",
+    "itemID" : 1,
+    "size" : 0.236328125,
+    "fileLocation" : "C:/Users/lylep/Downloads/New-folder-(2)/video (240p).mp4",
+    "trackLength" : 13.96,
+    "resolution" : "426x240",
+    "usability" : true
+  }, {
+    "mediaName" : "Lolsers",
+    "mediaType" : "Video",
+    "format" : "mov",
+    "itemID" : 1,
+    "size" : 10.0,
+    "fileLocation" : "Created-Files/Lolsers.mov",
+    "trackLength" : 20.0,
+    "resolution" : "1280x720",
+    "usability" : false
+  }, {
+    "mediaName" : "Lolsers3",
+    "mediaType" : "Video",
+    "format" : "mov",
+    "itemID" : 1,
+    "size" : 10.0,
+    "fileLocation" : "Created-Files/Lolsers3.mov",
+    "trackLength" : 20.0,
+    "resolution" : "1280x720",
+    "usability" : false
+  }, {
+    "mediaName" : "Ceri",
+    "mediaType" : "Video",
+    "format" : "mkv",
+    "itemID" : 1,
+    "size" : 10.0,
+    "fileLocation" : "Created-Files/Ceri.mkv",
+    "trackLength" : 10.0,
+    "resolution" : "640x480",
+    "usability" : false
+  }, {
+    "mediaName" : "Ceri4",
+    "mediaType" : "Video",
+    "format" : "mkv",
+    "itemID" : 1,
+    "size" : 10.0,
+    "fileLocation" : "Created-Files/Ceri4.mkv",
+    "trackLength" : 10.0,
+    "resolution" : "640x480",
+    "usability" : false
+  }, {
+    "mediaName" : "back to the past",
+    "mediaType" : "Image",
+    "format" : "png",
+    "itemID" : 1,
+    "size" : 11.0,
+    "fileLocation" : "Created-Files/back to the past.png",
+    "trackLength" : 0.0,
+    "resolution" : "1280x720",
+    "usability" : false
   } ]
 }
