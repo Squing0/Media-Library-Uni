@@ -9,7 +9,7 @@ import java.io.IOException;
 import GUI.*;
 
 public class FileManager implements Runnable{
-    private String folderLocation = "";
+    private String folderLocation = "C:/Users/lylep/Downloads/testtt";
     private FileObserver observer;
 
     public FileManager(FileObserver o){
@@ -23,50 +23,53 @@ public class FileManager implements Runnable{
 
         try {
             Path dir = Paths.get(folderLocation);
-
             WatchService ws = FileSystems.getDefault().newWatchService();
-
             dir.register(ws, StandardWatchEventKinds.ENTRY_CREATE);
 
-            while (true) {
-                WatchKey key = null;
-                try {
+            while (true){
+                if(Thread.interrupted()){
+                    break;
+                }
+                WatchKey key;
+                try{
                     key = ws.take();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                }
+                catch (InterruptedException e){
+                    break;
                 }
 
-                for (WatchEvent<?> event : key.pollEvents()) {
-                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-                        Path createdFilePath = dir.resolve((Path) event.context());
-                        SwingUtilities.invokeLater(() -> {
-                            System.out.println("File created!");
-                        });
+                    for (WatchEvent<?> event : key.pollEvents()) {
+                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
+                            Path createdFilePath = dir.resolve((Path) event.context());
+                            SwingUtilities.invokeLater(() -> {
+                                System.out.println("File processed");
+                            });
 
-                        Search search = new Search();
-                        search.typeVerify(createdFilePath.toString().replace("\\", "/"), "Media-Libraries/library7.json");
+                            Search search = new Search();
+                            search.typeVerify(createdFilePath.toString().replace("\\", "/"), "Media-Libraries/library7.json");
 
-                        observer.onFileCreated(createdFilePath);
-                    }
+                            observer.onFileCreated(createdFilePath);
+                        }
+
                 }
 
                 boolean valid = key.reset();
                 if(!valid){
                     break;
                 }
+
             }
+
         }
         catch (IOException e){
             e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
 
     }
-    public void importToLibrary(){
 
-    }
     public void openMediaItem(String fl){
         if(Desktop.isDesktopSupported()){
             Desktop desktop = Desktop.getDesktop();

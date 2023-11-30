@@ -9,14 +9,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LibraryPage extends JFrame implements FileObserver {
-    private MediaLibrary library = new MediaLibrary();
+//    private MediaLibrary library = new MediaLibrary();
+    private MediaLibrary library;
     private FileManager fm = new FileManager();
     private Thread watchThread;
+    private File unchangedFile;
+    private File clonedFile;
     private JLabel label = new JLabel("Hello!");
     private JButton backToMain;
     private String libraryPath;
@@ -320,6 +325,8 @@ public class LibraryPage extends JFrame implements FileObserver {
         watchThread.start();
 
         loadData();
+
+        setUpFiles();
     }
 
     public void setFolder() {
@@ -330,22 +337,63 @@ public class LibraryPage extends JFrame implements FileObserver {
         int response = fileChooser.showOpenDialog(null);
         String path = "";
 
+        fm = new FileManager(this::onFileCreated);
+
         if(response == JFileChooser.APPROVE_OPTION){
            path = fileChooser.getSelectedFile().getAbsolutePath().replace("\\", "/");
            fm.setFolderLocation(path);
+
+           if(watchThread != null){
+               watchThread.interrupt();
+               try{
+                   watchThread.join();
+               }
+               catch (InterruptedException e){
+                   e.printStackTrace();
+               }
+           }
+
+
+           watchThread = new Thread(fm);
+           watchThread.start();
         }
-
-//        if(watchThread != null){
-//            watchThread.interrupt();
-//        }
-//
-//        fm = new FileManager(path, this::onFileCreated);
-//        watchThread = new Thread(fm);
-//        watchThread.start();
-
-
     }
 
+    public void setUpFiles(){
+        String[] fullPath = libraryPath.split("/");
+        String[] nameAndFormat = fullPath[1].split("\\.");
+        String name = nameAndFormat[0];
+        String format = nameAndFormat[1];
+
+        unchangedFile = new File(libraryPath);
+
+//        clonedFile = new File(System.getProperty("java.io.tmpdir"));
+//
+//        while (clonedFile.exists()){
+//            clonedFile = new File(System.getProperty("java.io.tmpdir"), nameAndFormat + "1");
+//
+//        }
+//
+//        try {
+//            clonedFile.createNewFile();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+        try {
+            clonedFile = File.createTempFile(name + "C", "." + format, new File("Media-Libraries/"));
+            Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveChoice(){
+        clonedFile.delete();
+    }
+
+    public void notSaveChoice(){
+        unchangedFile.delete();
+    }
     public void checkItemType() {
        String type = (String) typeEnter.getSelectedItem();
 
@@ -689,16 +737,17 @@ public class LibraryPage extends JFrame implements FileObserver {
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
-        if(library.getMediaItems() != null){
-            updateMediaItems(getMediaItems());
+        if(library != null){
+            if(!library.getMediaItems().isEmpty()){
+                updateMediaItems(getMediaItems());
+            }
+
+            playlistItemsModel.clear();
+
+            if(!library.getPlaylists().isEmpty()){
+                updatePlaylists(getPlaylists());
+            }
         }
-
-        playlistItemsModel.clear();
-
-        if(library.getPlaylists() != null){
-            updatePlaylists(getPlaylists());
-        }
-
     }
 
     public void onFileCreated(Path fl){
@@ -767,6 +816,19 @@ public class LibraryPage extends JFrame implements FileObserver {
         return playlistItems;
     }
     public void goBack(){
+
+        int choice = JOptionPane.showConfirmDialog(backToMain,
+                "Save changes?",
+                        "Options:",
+                JOptionPane.YES_NO_OPTION);
+
+        if(choice == 0){
+            saveChoice();
+        }
+        else {
+            notSaveChoice();
+        }
+
         this.dispose();
         new MainPage();
     }
