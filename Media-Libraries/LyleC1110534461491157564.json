@@ -1,0 +1,64 @@
+{
+  "libraryName" : "Lyle",
+  "location" : "Media-Libraries/Lyle.json",
+  "mediaItems" : [ {
+    "mediaName" : "asd",
+    "mediaType" : "Image",
+    "format" : "jpeg",
+    "size" : 12.0,
+    "fileLocation" : "Created-Files/asd.jpeg",
+    "trackLength" : 0.0,
+    "resolution" : "320x240",
+    "usability" : false
+  }, {
+    "mediaName" : "Blank diagram",
+    "mediaType" : "Image",
+    "format" : "png",
+    "size" : 0.1044921875,
+    "fileLocation" : "C:/Users/lylep/Downloads/testCon/Blank diagram.png",
+    "trackLength" : 0.0,
+    "resolution" : "2213x3409",
+    "usability" : true
+  }, {
+    "mediaName" : "WOO",
+    "mediaType" : "Audio",
+    "format" : "mp3",
+    "size" : 12.0,
+    "fileLocation" : "Created-Files/WOO.mp3",
+    "trackLength" : 12.0,
+    "resolution" : "No resolution",
+    "usability" : false
+  }, {
+    "mediaName" : "Free_Test_Data_100KB_MP3",
+    "mediaType" : "Audio",
+    "format" : "mp3",
+    "size" : 0.09765625,
+    "fileLocation" : "C:/Users/lylep/Downloads/testCon/Free_Test_Data_100KB_MP3.mp3",
+    "trackLength" : 3.996735,
+    "resolution" : "No resolution",
+    "usability" : true
+  }, {
+    "mediaName" : "video (240p)",
+    "mediaType" : "Video",
+    "format" : "mp4",
+    "size" : 0.236328125,
+    "fileLocation" : "C:/Users/lylep/Downloads/New-folder-(2)/video (240p).mp4",
+    "trackLength" : 13.96,
+    "resolution" : "426x240",
+    "usability" : true
+  } ],
+  "playlists" : [ {
+    "playlistName" : "lol",
+    "playlistType" : "Image",
+    "mediaItems" : [ {
+      "mediaName" : "asd",
+      "mediaType" : "Image",
+      "format" : "jpeg",
+      "size" : 12.0,
+      "fileLocation" : "Created-Files/asd.jpeg",
+      "trackLength" : 0.0,
+      "resolution" : "320x240",
+      "usability" : false
+    } ]
+  } ]
+}
