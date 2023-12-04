@@ -1,25 +1,27 @@
-package FileManageAndSearch;
+package FileManagement;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.nio.file.*;
 import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
+import java.nio.file.*;
 import java.io.IOException;
-import GUI.*;
 
 public class FileManager implements Runnable{
-    private String folderLocation = "C:/Users/lylep/Downloads/testtt";
+//    private String folderLocation = "C:/Users/lylep/Downloads/testtt";
+    private String folderLocation = "";
+    private String libraryPath = "";
     private FileObserver observer;
 
     public FileManager(FileObserver o){
-        this.observer = o;
+        observer = o;
     }
 
     public FileManager(){
-
     }
-    public void watchFolder() throws IOException {
+    // NEEDED? ^^^
+    public synchronized void watchFolder() throws IOException { //Made synchronized just to make sure
 
         try {
             Path dir = Paths.get(folderLocation);
@@ -41,12 +43,10 @@ public class FileManager implements Runnable{
                     for (WatchEvent<?> event : key.pollEvents()) {
                         if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
                             Path createdFilePath = dir.resolve((Path) event.context());
-                            SwingUtilities.invokeLater(() -> {
-                                System.out.println("File processed");
-                            });
+                            SwingUtilities.invokeLater(() -> System.out.println("File processed"));
 
                             Search search = new Search();
-                            search.typeVerify(createdFilePath.toString().replace("\\", "/"), "Media-Libraries/library7.json");
+                            search.typeVerify(createdFilePath.toString().replace("\\", "/"), libraryPath);
 
                             observer.onFileCreated(createdFilePath);
                         }
@@ -61,9 +61,7 @@ public class FileManager implements Runnable{
             }
 
         }
-        catch (IOException e){
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        catch (IOException | InterruptedException e){
             e.printStackTrace();
         }
 
@@ -98,14 +96,30 @@ public class FileManager implements Runnable{
         }
     }
 
-    // Remove which ones aren't used
-    public String getFolderLocation() {
-        return folderLocation;
-    }
+    // FILES DON'T GET DELTED WHEN LIBRARY IS DELTEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 
-    public void setFolderLocation(String folderLocation) {
-        this.folderLocation = folderLocation;
+    /**
+     * Creates a simple 'media file' for information
+     * to be retrieved from.
+     * @param fl the file location of the media file.
+     */
+    public void createMediaFileBasic(String fl)  {
+        RandomAccessFile file = null;
+
+        try {
+            file = new RandomAccessFile(fl, "rw");
+            file.close();
+        } catch (FileNotFoundException e) {
+            String s1 = String.format("File at (%s) does not exist!", fl);
+            System.out.println(s1);
+        }
+        catch (IOException e) {
+            String s1 = String.format("File at (%s) was not able to be closed.", fl);
+            System.out.println(s1);
+        }
     }
+    public void setFolderLocation(String folderLocation) {this.folderLocation = folderLocation;}
+    public void setLibraryPath(String libraryPath){this.libraryPath = libraryPath;}
 
     @Override
     public void run() {

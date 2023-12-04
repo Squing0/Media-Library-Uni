@@ -1,5 +1,3 @@
-import FileManageAndSearch.FileManager;
-import FileManageAndSearch.Search;
 import MediaManagement.MediaItem;
 import MediaManagement.MediaLibrary;
 import MediaManagement.Playlist;
@@ -52,9 +50,6 @@ public class Main {
 
 //        FileManager fm = new FileManager();
 //        fm.openMediaItem("Created-Files/Sample_abc.jpg");
-        MediaItem item5 = new MediaItem("file_example_MP4_480_1_5M", "Video", "mp3", 2, 20, "Created-Files/file_example_MP4_480_1_5MG.mp4", 20, "1920x1080", false);
-        MediaItem item6 = new MediaItem("LOl", "Audio", "mp3", 2, 20, "Created-Files/file_example_MP4_480_1_5MG.mp4", "1920x1080", false);
-        MediaItem item7 = new MediaItem("LOl", "Audio", "jpg", 2, 20, "Created-Files/file_example_MP4_480_1_5MG.mp4", "1920x1080", false);
 
         Playlist playlist5 = new Playlist("Numbers", "Audio", 2);
         String fl = "Media-Libraries/library7.json";

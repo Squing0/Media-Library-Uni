@@ -1,4 +1,4 @@
-package FileManageAndSearch;
+package FileManagement;
 
 import java.nio.file.Path;
 

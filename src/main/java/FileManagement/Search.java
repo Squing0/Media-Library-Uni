@@ -1,10 +1,9 @@
-package FileManageAndSearch;
+package FileManagement;
 
 import MediaManagement.MediaItem;
 import MediaManagement.MediaLibrary;
 
 import javax.imageio.ImageIO;
-import javax.management.InstanceAlreadyExistsException;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
@@ -14,26 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Search {
-//    public MediaManagement.MediaItem searchLocation(String location){
-//
-//        // Have 2 if statements, one for videos and audio and one for images
-//        String name = "Sunset";
-//        String format = "JPG";
-//        String type = "Image";
-//        long size = 50l;  //In Mb
-//        int itemId = 1;
-//
-//
-//        // pretend as though this one is for images
-//
-//        return new MediaManagement.MediaItem(name, type, format, itemId, size, location,"", true);
-//    }
-//
-//    public void importItems(int libraryID){ //Make plural as in items?
-//        MediaManagement.MediaItem newItem = searchLocation("lol");
-//        // Want to add to media library but also don't want to have to instantiate one
-//    }
-
     public void typeVerify2(String fl){
 
     }
@@ -52,11 +31,11 @@ public class Search {
         List<String> audioFormats = Arrays.asList("mp3", "aac", "wav");
         List<String> videoFormats = Arrays.asList("mp4", "mkv", "mov");
 
-        String type = ""; // Mame better later
+        String type = null; // Mame better later
         int ID = 1;
         double fileSize = getFileSize(itemFl);
-        String resolution;
-        double duration;
+        String resolution = null;
+        double duration = 0;
 
         String resolutionCheck = " -i \"" + itemFl + "\" -show_entries stream=width,height -v quiet -of csv=p=0";
         String durationCheck = " -i \"" + itemFl + "\" -show_entries format=duration -v quiet -of csv=p=0";
@@ -69,7 +48,7 @@ public class Search {
             if(imageFormats.contains(format.toLowerCase())){
                 type = "Image";
                 resolution = getImageResolution(itemFl);
-                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl, resolution, true);
+                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl, duration, resolution, true);
                 library.addMedia(libraryFl, item);
             }
             else if(audioFormats.contains(format.toLowerCase())){
@@ -85,6 +64,7 @@ public class Search {
                 MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl, duration, resolution.replace(",","x"), true);
                 library.addMedia(libraryFl, item);
             }
+
             else{
                     System.out.println(nameAndFormat + "File is either not a media file or has unsupported file type!");
             }
@@ -98,7 +78,7 @@ public class Search {
         Search search = new Search();
 
         File dir = new File(fd);
-        File[] files = dir.listFiles();     // Assumes that there are no sub directories
+        File[] files = dir.listFiles();     // Assumes that there are no subdirectories
         for (File file : files){
             System.out.println();
             try {
@@ -143,14 +123,8 @@ public class Search {
         int height = image.getHeight();
         int width = image.getWidth();
 
-        String resolution = height + "x" + width;
+        return height + "x" + width;
 
-        return resolution;
-
-
-        // Creating final file
-//        MediaManagement.MediaItem item = new MediaManagement.MediaItem(name, type, format, ID, megabytes, fl, resolution);
-//        item.printAll();
     }
 
     public String accessMediaSpecific(String action) { // awful name lol
@@ -159,7 +133,7 @@ public class Search {
         String command = ffprobePath + action;
 
         ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
-        Process process = null;
+        Process process;
         String ffprobeOutput = "";
 
         try {
@@ -180,8 +154,5 @@ public class Search {
 
 
        return ffprobeOutput;
-    }
-    public void searchLibrary(int libraryID){
-        // need to have if statements for name, format, type, size, ID
     }
 }

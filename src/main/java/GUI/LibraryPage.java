@@ -1,7 +1,7 @@
 package GUI;
 
 import MediaManagement.*;
-import FileManageAndSearch.*;
+import FileManagement.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LibraryPage extends JFrame implements FileObserver {
-//    private MediaLibrary library = new MediaLibrary();
     private MediaLibrary library;
     private FileManager fm = new FileManager();
     private Thread watchThread;
@@ -61,16 +60,6 @@ public class LibraryPage extends JFrame implements FileObserver {
     public LibraryPage(String lp){
         this.libraryPath = lp;
 
-//        label.setBounds(0,0,100,50);
-//        label.setFont(new Font(null, Font.PLAIN, 25));
-//        this.add(label);
-
-
-//
-//        JLabel label = new JLabel(libraryPath);
-//        label.setBounds(0,0,200,50);
-//        this.add(label);
-
         String clickDesc = "    Double click items to see more details";
         JLabel title = new JLabel("Library: " + libraryPath + clickDesc);
 
@@ -92,6 +81,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         importFolder.addActionListener(e -> openFolder());
         deleteMediaItem.addActionListener(e -> deleteitemList());
         folderWatch.addActionListener(e -> setFolder());
+        searchMediaItem.addActionListener(e -> searchForItem());
 
         createPlaylist.addActionListener(e -> createPlaylist());
         deletePlaylist.addActionListener(e -> deletePlaylist());
@@ -104,7 +94,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         // first pane
         JPanel nameTypePanel = new JPanel();
-        nameTypePanel.setBackground(Color.BLUE);
+        nameTypePanel.setBackground(Color.LIGHT_GRAY);
         nameTypePanel.setLayout(new GridLayout(4,0));
         nameTypePanel.setName("Item name and type");
 
@@ -124,7 +114,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         // Second pane
         JPanel itemMainDetails = new JPanel();
-        itemMainDetails.setBackground(Color.GREEN);
+        itemMainDetails.setBackground(Color.PINK);
         itemMainDetails.setLayout(new GridLayout(4,2));
         itemMainDetails.setName("Main item details");
 
@@ -161,7 +151,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         subItem.addActionListener(e -> submitItem());
 
         submitPanel.setName("Submit item");
-        submitPanel.setBackground(Color.PINK);
+        submitPanel.setBackground(new Color(24, 240, 151));
         submitPanel.add(subItem);
 
         // Add tabbed panels
@@ -188,7 +178,7 @@ public class LibraryPage extends JFrame implements FileObserver {
                     String selectedItem = list.getModel().getElementAt(selectedIndex);
 
                     MediaItem item = getMediaItemFromList(selectedItem);
-                    String details = item.printAllMediaLibrary();
+                    String details = item.printAllItemDetails();
 
                     JOptionPane.showMessageDialog(null, details, "Success!", JOptionPane.INFORMATION_MESSAGE);
 
@@ -206,12 +196,6 @@ public class LibraryPage extends JFrame implements FileObserver {
         playlistsModel = new DefaultComboBoxModel<>();
         playlists = new JComboBox<>(playlistsModel);
         playlists.addActionListener(e -> loadplaylistItems());
-
-
-
-
-        //asd
-
 
 //        playlistModel = new DefaultComboBoxModel<>();
 //        playlistList = new JList<>(playlistModel);
@@ -235,7 +219,7 @@ public class LibraryPage extends JFrame implements FileObserver {
                     String selectedItem = list.getModel().getElementAt(selectedIndex);
 
                     MediaItem item = getMediaItemFromList(selectedItem);
-                    String details = item.printAllMediaLibrary();
+                    String details = item.printAllItemDetails();
 
                     JOptionPane.showMessageDialog(null, details, "Success!", JOptionPane.INFORMATION_MESSAGE);
 
@@ -248,10 +232,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         JLabel playlistItemsHeading = new JLabel("Playlist Items:");
         playlistItems.setColumnHeaderView(playlistItemsHeading);
-
-
-
-
+//        playlistItems.setSize(new Dimension(100,100)); may need to change grid to show smaller
 
         // Panels
         JPanel centerPanel = new JPanel();
@@ -268,14 +249,14 @@ public class LibraryPage extends JFrame implements FileObserver {
 
 
         JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(Color.BLUE);
+        bottomPanel.setBackground(new Color(24, 240, 151));
         bottomPanel.setPreferredSize(new Dimension(100,35));
         bottomPanel.setLayout(new FlowLayout());
 
         bottomPanel.add(backToMain);
 
         JPanel rightPanel = new JPanel();
-        rightPanel.setBackground(Color.GREEN);
+//        rightPanel.setBackground(Color.GREEN);
         rightPanel.setPreferredSize(new Dimension(200,100));
 
         rightPanel.setLayout(new GridLayout(6,0,0,10));
@@ -288,7 +269,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         rightPanel.add(openPlaylistItem);
 
         JPanel leftPanel = new JPanel();
-        leftPanel.setBackground(Color.MAGENTA);
+//        leftPanel.setBackground(Color.MAGENTA);
         leftPanel.setPreferredSize(new Dimension(220,100));
 
         leftPanel.setLayout(new GridLayout(5,0,0,10));
@@ -301,7 +282,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 
 
         JPanel topPanel = new JPanel();
-        topPanel.setBackground(Color.PINK);
+        topPanel.setBackground(new Color(24, 240, 151));
         topPanel.setPreferredSize(new Dimension(100,100));
         topPanel.setLayout(new GridLayout(0,2));
         topPanel.add(createitemPane);
@@ -317,7 +298,23 @@ public class LibraryPage extends JFrame implements FileObserver {
 
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        this.addWindowListener(new WindowAdapter() {
+//            @Override
+//            public void windowClosing(WindowEvent e) {
+//
+//                goBack();
+//
+//                dispose();
+//            }
+//
+//            @Override
+//            public void windowClosed(WindowEvent e){
+//                new MainPage();
+//            }
+//        });
+
         this.setSize(1000,600);
+        this.setResizable(false);
         this.setVisible(true);
 
         fm = new FileManager(this::onFileCreated);
@@ -327,6 +324,60 @@ public class LibraryPage extends JFrame implements FileObserver {
         loadData();
 
         setUpFiles();
+    }
+
+    public void searchForItem() {
+        String name = JOptionPane.showInputDialog("Enter name to search");
+        String format = "jpeg";
+
+        String[] responses = {"Image", "Audio", "Video"};
+        String type = "";
+
+        int index = JOptionPane.showOptionDialog(null,  //literally just copied from other method
+                "Playlist type:",
+                "Enter details",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                responses,
+                0);
+
+        if(index == 0){
+            type = "Image";
+        }
+        else if(index == 1){
+            type = "Audio";
+        }
+        else if(index == 2){
+            type = "Video";
+        }
+
+
+        library = library.getLibraryFromJson(libraryPath);
+//        MediaItem item = library.searchForItem(library, name, type); USE THIS IF CAN@T GET BINARY WORKING
+        MediaItem item = library.binarySearchTrial(library, name, type);
+
+        if(item != null){
+            JOptionPane.showMessageDialog(this, item.printAllItemDetails());
+            int choice = JOptionPane.showConfirmDialog(this, "Open media item?", "Open?", JOptionPane.YES_NO_OPTION);
+
+            if(choice == JOptionPane.YES_OPTION){
+                if(!item.getUsability()){
+                    JOptionPane.showMessageDialog(null, "File isn't usable as was manually created!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                String path = item.getFileLocation();
+                fm.openMediaItem(path);
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(null,
+                    "File name with that type does not exist!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     public void setFolder() {
@@ -341,7 +392,9 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         if(response == JFileChooser.APPROVE_OPTION){
            path = fileChooser.getSelectedFile().getAbsolutePath().replace("\\", "/");
+
            fm.setFolderLocation(path);
+           fm.setLibraryPath(libraryPath);
 
            if(watchThread != null){
                watchThread.interrupt();
@@ -352,7 +405,6 @@ public class LibraryPage extends JFrame implements FileObserver {
                    e.printStackTrace();
                }
            }
-
 
            watchThread = new Thread(fm);
            watchThread.start();
@@ -456,7 +508,8 @@ public class LibraryPage extends JFrame implements FileObserver {
 
             library = new MediaLibrary();
             library.addMedia(libraryPath, item);
-            item.createMediaFileBasic(fl, type);
+
+            fm.createMediaFileBasic(fl);
 
             loadData();
 
@@ -495,7 +548,8 @@ public class LibraryPage extends JFrame implements FileObserver {
 
     public void createPlaylist(){   // name too similar to component
         String name = JOptionPane.showInputDialog("What is your playlist name?: ");
-                String[] responses = {"Image", "Audio", "Video"};
+
+        String[] responses = {"Image", "Audio", "Video"};
         String type = "";
 
         int index = JOptionPane.showOptionDialog(null,
@@ -751,7 +805,7 @@ public class LibraryPage extends JFrame implements FileObserver {
     }
 
     public void onFileCreated(Path fl){
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {  // For file manager
             loadData();
         });
     }
@@ -816,20 +870,20 @@ public class LibraryPage extends JFrame implements FileObserver {
         return playlistItems;
     }
     public void goBack(){
-
-        int choice = JOptionPane.showConfirmDialog(backToMain,
+        int choice = JOptionPane.showConfirmDialog(this,
                 "Save changes?",
                         "Options:",
                 JOptionPane.YES_NO_OPTION);
 
-        if(choice == 0){
+        if(choice == JOptionPane.YES_OPTION){
             saveChoice();
         }
         else {
             notSaveChoice();
         }
 
-        this.dispose();
-        new MainPage();
+        // Look for right place to use invoke later
+        SwingUtilities.invokeLater(MainPage::new);
+        dispose();
     }
 }
