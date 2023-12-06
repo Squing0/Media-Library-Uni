@@ -12,7 +12,6 @@ import java.nio.file.*;
 import java.io.IOException;
 
 public class FileManager implements Runnable{
-//    private String folderLocation = "C:/Users/lylep/Downloads/testtt";
     private String folderLocation = "";
     private String libraryPath = "";
     private FileObserver observer;
@@ -113,7 +112,7 @@ public class FileManager implements Runnable{
      * @param fl the file location of the media file.
      */
     public void createMediaFileBasic(String fl)  {  // Should I make parameter names more consistent
-        RandomAccessFile file = null;
+        RandomAccessFile file;
 
         try {
             file = new RandomAccessFile(fl, "rw");

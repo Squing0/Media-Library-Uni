@@ -11,14 +11,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  * @author Lyle Patterson.
  */
 public class MediaLibrary {
-    /** Do I really need to comment each one of these? */
+    /** Name of media library.*/
     private String libraryName;
-    /** Used to identify specific libraries (NEEDED?) */
-
-    /** Specific location of media library. */
+    /** Location of JSON associated with media library. */
     private String location;
-    /** Text file associated with media library. */
+    /** List of media item objects in media library.*/
     private Vector<MediaItem> mediaItems = new Vector<>();
+    /** List of playlist objects in media library.*/
     private ArrayList<Playlist> playlists = new ArrayList<>();
 
     /**
@@ -239,44 +238,6 @@ public class MediaLibrary {
             }
         }
         return false;
-    }
-    public MediaItem searchForItem(MediaLibrary library, String name, String type){
-        for(MediaItem mediaItem: library.getMediaItems()){
-        // LOOK INTO STREAMS OR BINARY SEARCH
-            if (mediaItem.getMediaName().equals(name) && mediaItem.getMediaType().equals(type)){    // Just copied
-                return mediaItem;
-            }
-        }
-
-        return null;
-    }
-
-    public MediaItem binarySearchTrial(MediaLibrary library, String name, String type){   //change name
-//        Vector<String> itemNames = new Vector<>();
-//        Vector<String> itemTypes = new Vector<>();
-//
-//        for(MediaItem item : library.getMediaItems()){
-//            itemNames.add(item.getMediaName());
-//            itemTypes.add(item.getMediaType());
-//        }
-//
-//        Collections.sort(itemNames);
-//        Collections.sort(itemTypes);
-
-        MediaItem item = new MediaItem(name, type, null, 0, 0, null, 0, null, false);
-
-        Comparator<MediaItem> comparator = Comparator.
-                comparing(MediaItem::getMediaName).
-                thenComparing(MediaItem::getMediaType);
-
-        int index = Collections.binarySearch(library.getMediaItems(), item, comparator);
-
-        if (index >= 0){
-            return library.getMediaItems().get(index);
-        }
-        else{
-            return null;
-        }
     }
 
 // DDONT DELTE GETTERS FOR JACKJSONNNNNNNNNNNN

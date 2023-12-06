@@ -1,7 +1,5 @@
 package MediaManagement;
 
-import java.io.*;
-
 /**
  * Media item class handles creation of media items.
  * @author Lyle Patterson
@@ -85,7 +83,6 @@ public class MediaItem {
         this.resolution = r;
         this.usability = u;
     }
-
 
 
     // NEED EMPTY CONSTRUCTOR FOR JACKSON

@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Search {
@@ -21,7 +23,11 @@ public class Search {
     public void typeVerify2(String fl){
 
     }
-    public void typeVerify(String itemFl, String libraryFl) throws IOException, InterruptedException {
+
+    public void importFile(){
+
+    }
+    public void typeVerify(String itemFl, String libraryFl) throws InterruptedException, IOException {
         // Use this method to check if image, audio or video and if file type correct before extracting info
         String[] slashes = itemFl.split("/");
         String nameAndFormat = slashes[slashes.length - 1];
@@ -31,47 +37,44 @@ public class Search {
         String name = dots[0];
         String format = dots[dots.length - 1];    // Make method???
 
-        // Checking file format (also finds type)
-        List<String> imageFormats = Arrays.asList("jpeg","png","gif");
-        List<String> audioFormats = Arrays.asList("mp3", "aac", "wav");
-        List<String> videoFormats = Arrays.asList("mp4", "mkv", "mov");
+        String formatCorrect = findFormat(format);
 
-        String type = null; // Mame better later
-        int ID = 1;
+        String type;
         double fileSize = getFileSize(itemFl);
-        String resolution = null;
-        double duration = 0;
+        String resolution;
 
         String resolutionCheck = " -i \"" + itemFl + "\" -show_entries stream=width,height -v quiet -of csv=p=0";
         String durationCheck = " -i \"" + itemFl + "\" -show_entries format=duration -v quiet -of csv=p=0";
-        // " -i \"" + itemFl + "\" -show_entries format=duration -v quiet -of csv=p=0"; (try this if having problems)
+
+        double duration = Double.parseDouble(accessMediaSpecific(durationCheck));
 
         MediaLibrary library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryFl);
 
         if(!library.mediaItemAlreadyPresent(library, name, format)) { //Make simpler, how is the library location gotten?
-            if(imageFormats.contains(format.toLowerCase())){
-                type = "Image";
-                resolution = getImageResolution(itemFl);
-                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl, resolution, true);
-                library.addMedia(libraryFl, item);
-            }
-            else if(audioFormats.contains(format.toLowerCase())){
-                type = "Audio";
-                duration = Double.parseDouble(accessMediaSpecific(durationCheck));  // Need to parse back to double as string is returned
-                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl,duration,true);
-                library.addMedia(libraryFl, item);
-            }
-            else if(videoFormats.contains(format.toLowerCase())){
-                type = "Video";
-                duration = Double.parseDouble(accessMediaSpecific(durationCheck));  // Need to parse back to double as string is returned
-                resolution = accessMediaSpecific(resolutionCheck);
-                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl, duration, resolution.replace(",","x"), true);
-                library.addMedia(libraryFl, item);
-            }
+            switch (formatCorrect) {
+                case "Image" -> {
+                    type = "Image";
+                    resolution = getImageResolution(itemFl);
 
-            else{
-                    System.out.println(nameAndFormat + "File is either not a media file or has unsupported file type!");
+                    MediaItem item = new MediaItem(name, type, format, fileSize, itemFl, resolution, true);
+                    library.addMedia(libraryFl, item);
+                }
+                case "Audio" -> {
+                    type = "Audio";
+
+                    MediaItem item = new MediaItem(name, type, format, fileSize, itemFl, duration, true);
+                    library.addMedia(libraryFl, item);
+                }
+                case "Video" -> {
+                    type = "Video";
+                    resolution = accessMediaSpecific(resolutionCheck);
+
+                    MediaItem item = new MediaItem(name, type, format, fileSize, itemFl, duration, resolution.replace(",", "x"), true);
+                    library.addMedia(libraryFl, item);
+                }
+                default ->
+                        System.out.println(nameAndFormat + "File is either not a media file or has unsupported file type!");
             }
         }
         else{
@@ -100,6 +103,61 @@ public class Search {
         // Need to have error handling in case file, isn't media file
     }
 
+    public MediaItem searchForItem(MediaLibrary library, String name, String type){
+        for(MediaItem mediaItem: library.getMediaItems()){
+            // LOOK INTO STREAMS OR BINARY SEARCH
+            if (mediaItem.getMediaName().equals(name) && mediaItem.getMediaType().equals(type)){    // Just copied
+                return mediaItem;
+            }
+        }
+
+        return null;
+    }
+
+    public MediaItem binarySearchTrial(MediaLibrary library, String name, String type){   //change name
+//        Vector<String> itemNames = new Vector<>();
+//        Vector<String> itemTypes = new Vector<>();
+//
+//        for(MediaItem item : library.getMediaItems()){
+//            itemNames.add(item.getMediaName());
+//            itemTypes.add(item.getMediaType());
+//        }
+//
+//        Collections.sort(itemNames);
+//        Collections.sort(itemTypes);
+
+        MediaItem item = new MediaItem(name, type, null, 0, null, 0, null, false);
+
+        Comparator<MediaItem> comparator = Comparator.
+                comparing(MediaItem::getMediaName).
+                thenComparing(MediaItem::getMediaType);
+
+        int index = Collections.binarySearch(library.getMediaItems(), item, comparator);
+
+        if (index >= 0){
+            return library.getMediaItems().get(index);
+        }
+        else{
+            return null;
+        }
+    }
+    public String findFormat(String format){
+        List<String> imageFormats = Arrays.asList("jpeg","png","gif");
+        List<String> audioFormats = Arrays.asList("mp3", "aac", "wav");
+        List<String> videoFormats = Arrays.asList("mp4", "mkv", "mov");
+
+        if(imageFormats.contains(format.toLowerCase())){
+            return "Image";
+        }
+        else if(audioFormats.contains(format.toLowerCase())){
+            return "Audio";
+        }
+        else if(videoFormats.contains(format.toLowerCase())){
+            return "Video";
+        }
+
+        return null;
+    }
     public double getFileSize(String fl) {
         Path path = Paths.get(fl);
         long bytes = 0;

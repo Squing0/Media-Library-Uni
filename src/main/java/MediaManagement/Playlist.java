@@ -13,8 +13,6 @@ public class Playlist {
     private String playlistName = "";
     /** Type of playlist. */
     private String playlistType = "";
-    /** ID used to uniquely identify playlist. */
-
     /** Arraylist of Media Item objects */
     private ArrayList<MediaItem> mediaItems = new ArrayList<>();    // Should I use generics in other places?
 
@@ -22,7 +20,6 @@ public class Playlist {
      * Constructor assigns playlist information.
      * @param n playlist name.
      * @param t playlist type.
-     * @param ID playlist ID.
      */
     public Playlist(String n, String t){
         // Need to have either different constructors or if statements to differentiate type here
