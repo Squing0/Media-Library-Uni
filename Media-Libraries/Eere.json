@@ -1,12 +1,12 @@
 {
-  "libraryName" : "lll",
-  "location" : "Media-Libraries/lll.json",
+  "libraryName" : "Eere",
+  "location" : "Media-Libraries/Eere.json",
   "mediaItems" : [ {
-    "mediaName" : "dsf",
+    "mediaName" : "sdf",
     "mediaType" : "Image",
-    "format" : "jpeg",
+    "format" : "png",
     "size" : 23.0,
-    "fileLocation" : "Created-Files/dsf.jpeg",
+    "fileLocation" : "Created-Files/sdf.png",
     "trackLength" : 0.0,
     "resolution" : "320x240",
     "usability" : false

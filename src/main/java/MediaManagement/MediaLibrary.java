@@ -14,7 +14,7 @@ public class MediaLibrary {
     /** Do I really need to comment each one of these? */
     private String libraryName;
     /** Used to identify specific libraries (NEEDED?) */
-    private int libraryID;
+
     /** Specific location of media library. */
     private String location;
     /** Text file associated with media library. */
@@ -39,14 +39,6 @@ public class MediaLibrary {
     public MediaLibrary(){
     }
 // KEEP
-
-    public void createMediaLibrary(String fl, String name){
-        MediaLibrary mediaLibrary = new MediaLibrary(fl, name);
-
-        writeLibraryToFile(mediaLibrary, fl);
-
-        System.out.println("ya did it!");
-    }
 
     public void writeLibraryToFile(MediaLibrary mediaLibrary, String filePath){
         ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
@@ -209,7 +201,7 @@ public class MediaLibrary {
 
     public boolean mediaItemAlreadyPresent(MediaLibrary library, String name, String format){
 
-        for(MediaItem mediaItem : library.getMediaItems()){
+        for(MediaItem mediaItem : library.getMediaItems()){ // Use iterator here?
             if (mediaItem.getMediaName().equals(name) && mediaItem.getFormat().equals(format)){
                 return true;
             }

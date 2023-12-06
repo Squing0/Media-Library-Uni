@@ -1,4 +1,4 @@
-package FileManagement;
+package GUI;
 
 import java.nio.file.Path;
 

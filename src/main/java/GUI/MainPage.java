@@ -128,7 +128,9 @@ public class MainPage extends JFrame {
                 String path = "Media-Libraries/" + name + ".json";
 
                 MediaLibrary library = new MediaLibrary();
-                library.createMediaLibrary(path, name);
+//                library.createMediaLibrary(path, name);
+                FileManager fm = new FileManager();
+                fm.createLibraryFile(path, name);
 
                 mediaLibraryModel.addElement(name + ".json");
 

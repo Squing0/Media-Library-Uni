@@ -13,6 +13,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Search {
+    private static final Search instance = new Search();
+    private Search(){}
+    public static Search getInstance(){
+        return instance;
+    }
     public void typeVerify2(String fl){
 
     }
@@ -48,13 +53,13 @@ public class Search {
             if(imageFormats.contains(format.toLowerCase())){
                 type = "Image";
                 resolution = getImageResolution(itemFl);
-                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl, duration, resolution, true);
+                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl, resolution, true);
                 library.addMedia(libraryFl, item);
             }
             else if(audioFormats.contains(format.toLowerCase())){
                 type = "Audio";
                 duration = Double.parseDouble(accessMediaSpecific(durationCheck));  // Need to parse back to double as string is returned
-                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl,duration,"No resolution", true);
+                MediaItem item = new MediaItem(name, type, format, ID, fileSize, itemFl,duration,true);
                 library.addMedia(libraryFl, item);
             }
             else if(videoFormats.contains(format.toLowerCase())){
@@ -151,7 +156,6 @@ public class Search {
         } catch (IOException e) {
             System.out.println("Command failed!");
         }
-
 
        return ffprobeOutput;
     }

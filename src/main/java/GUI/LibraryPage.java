@@ -493,18 +493,21 @@ public class LibraryPage extends JFrame implements FileObserver {
             String resolution = "No resolution";
             double trackLength = 0;
 
+            MediaItem item = new MediaItem();   // Not sure if will work as also initialised below
+
             if(type.equals("Video")){
                 resolution = (String) resolutionEnter.getSelectedItem();
                 trackLength = Double.parseDouble(durationEnter.getText());
+                item = new MediaItem(name, type, format, ID, size, fl, trackLength, resolution, use);
             }
             if(type.equals("Image")){
                 resolution = (String) resolutionEnter.getSelectedItem();
+                item = new MediaItem(name, type, format, ID, size, fl, resolution, use);
             }
             if(type.equals("Audio")){
                 trackLength = Double.parseDouble(durationEnter.getText());
+                item = new MediaItem(name, type, format, ID, size, fl, trackLength,use);
             }
-
-            MediaItem item = new MediaItem(name, type, format, ID, size, fl, trackLength, resolution, use);
 
             library = new MediaLibrary();
             library.addMedia(libraryPath, item);
@@ -533,7 +536,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 
             library.deleteMediaItem(libraryPath, item.getMediaName(), item.getFormat());    // Look for more efficient way
 
-            if(item.getUsability() == false){
+            if(!item.getUsability()){
                 fm = new FileManager();
                 fm.deleteFile("Created-Files", item.getMediaName() + "." + item.getFormat());
             }
@@ -696,7 +699,7 @@ public class LibraryPage extends JFrame implements FileObserver {
     }
 
     public void openFolder() {
-        Search search = new Search();
+        Search search = Search.getInstance();
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
         String dirPath = "";

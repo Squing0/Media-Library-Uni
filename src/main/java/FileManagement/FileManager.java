@@ -1,5 +1,8 @@
 package FileManagement;
 
+import GUI.FileObserver;
+import MediaManagement.MediaLibrary;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -45,7 +48,7 @@ public class FileManager implements Runnable{
                             Path createdFilePath = dir.resolve((Path) event.context());
                             SwingUtilities.invokeLater(() -> System.out.println("File processed"));
 
-                            Search search = new Search();
+                            Search search = Search.getInstance();
                             search.typeVerify(createdFilePath.toString().replace("\\", "/"), libraryPath);
 
                             observer.onFileCreated(createdFilePath);
@@ -82,7 +85,13 @@ public class FileManager implements Runnable{
             }
         }
     }
+    public void createLibraryFile(String fl, String name){
+        MediaLibrary library = new MediaLibrary(fl, name);
 
+        library.writeLibraryToFile(library, fl);
+
+        System.out.println("ya did it!");
+    }
     public void deleteFile(String folderLocation, String fileName){  // put in different class
         File dir = new File(folderLocation);
         File[] files = dir.listFiles();
@@ -103,7 +112,7 @@ public class FileManager implements Runnable{
      * to be retrieved from.
      * @param fl the file location of the media file.
      */
-    public void createMediaFileBasic(String fl)  {
+    public void createMediaFileBasic(String fl)  {  // Should I make parameter names more consistent
         RandomAccessFile file = null;
 
         try {

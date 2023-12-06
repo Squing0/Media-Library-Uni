@@ -13,14 +13,12 @@ public class MediaItem {
     private String mediaType;  // Know mot really need to add values but lecturers might like it???
     /** Format of media item (e.g., mp3). */
     private String format;
-    /** ID to uniquely identify media item. */
-    private int itemID;
     /** Size of media item in megabytes. */
     private double size;
     /** Specific file location of media item. */
     private String fileLocation;
     /** Track length of audio and video in seconds. */
-    private double trackLength;
+    private double trackLength = 0; // initialised to 0 for image
     /** Resolution of images and videos. */
     private String resolution;    // Make separate constructor for videos to make unique
     /** Describes if file is usable.
@@ -28,28 +26,67 @@ public class MediaItem {
     private boolean usability;
 
     /**
-     * Media item constructor.
+     * Video item constructor.
      * @param n item name.
      * @param t item type.
      * @param f item format.
-     * @param ID item ID.
      * @param s item size.
      * @param fl item file location.
      * @param tl item track length.
      * @param r item resolution.
      * @param u item usability.
      */
-    public MediaItem(String n, String t, String f, int ID, double s, String fl, double tl, String r, boolean u){
+    public MediaItem(String n, String t, String f,double s, String fl, double tl, String r, boolean u){
         this.mediaName = n;
         this.mediaType = t;
         this.format = f;
-        this.itemID = ID;
         this.size = s;
         this.fileLocation = fl;
         this.trackLength = tl;
         this.resolution = r;
         this.usability = u;
     }
+
+    /**
+     * Audio item constructor.
+     * @param n item name.
+     * @param t item type.
+     * @param f item format.
+     * @param s item size.
+     * @param fl item file location.
+     * @param tl item track length.
+     * @param u item usability.
+     */
+    public MediaItem(String n, String t, String f, double s, String fl, double tl, boolean u){
+        this.mediaName = n;
+        this.mediaType = t;
+        this.format = f;
+        this.size = s;
+        this.fileLocation = fl;
+        this.trackLength = tl;
+        this.usability = u;
+    }
+    /**
+     * Image item constructor.
+     * @param n item name.
+     * @param t item type.
+     * @param f item format.
+     * @param s item size.
+     * @param fl item file location.
+     * @param r item resolution.
+     * @param u item usability.
+     */
+    public MediaItem(String n, String t, String f, double s, String fl, String r, boolean u){
+        this.mediaName = n;
+        this.mediaType = t;
+        this.format = f;
+        this.size = s;
+        this.fileLocation = fl;
+        this.resolution = r;
+        this.usability = u;
+    }
+
+
 
     // NEED EMPTY CONSTRUCTOR FOR JACKSON
     public MediaItem(){
@@ -63,6 +100,7 @@ public class MediaItem {
     public String printAllItemDetails(){
         String s1 = "";
         String use = "";
+
         if(!usability){
             use = "NOT USABLE";
         }
@@ -70,8 +108,12 @@ public class MediaItem {
             use = "USABLE";
         }
 
-        s1 = String.format("%s\n%s\n%s\n%o\n%.2f(MB)\n%.2f seconds\n%s\n%s\n%s",
-                this.mediaName, this.mediaType, this.format, this.itemID,
+        if(mediaType.equals("Audio")){
+            resolution = "No resolution";   // shows null otherwise
+        }
+
+        s1 = String.format("%s\n%s\n%s\n%.2f(MB)\n%.2f seconds\n%s\n%s\n%s",
+                this.mediaName, this.mediaType, this.format,
                 this.size, this.trackLength, this.resolution, this.fileLocation, use);
 
         return s1;
