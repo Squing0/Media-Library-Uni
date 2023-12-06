@@ -87,7 +87,7 @@ public class FileManager implements Runnable{
     public void createLibraryFile(String fl, String name){
         MediaLibrary library = new MediaLibrary(fl, name);
 
-        library.writeLibraryToFile(library, fl);
+        library.writeLibraryToJson(library, fl);
 
         System.out.println("ya did it!");
     }

@@ -39,6 +39,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 //    private JList playlistList;
 //    private DefaultListModel<String> playlistModel;
     private JComboBox<String> playlists;
+    private JList playlistsList; // Trying to keep consistent, if not then explain
     private DefaultComboBoxModel<String> playlistsModel;
     private JScrollPane playlistItems;
     private JList playlistItemsList;
@@ -54,235 +55,49 @@ public class LibraryPage extends JFrame implements FileObserver {
     private String[] videoFormats;
     private JComboBox formatEnter;
     private JTextField sizeEnter;
+    JLabel title;
 
     public LibraryPage(String lp){
         this.libraryPath = lp;
 
-        // Top panel details
-        String clickDesc = "    Double click items to see more details";
-        JLabel title = new JLabel("Library: " + libraryPath + clickDesc);
+        // Top panel label
+        title = new JLabel("Library: " + libraryPath);
 
-        // Defining buttons:
-        openMediaItem = new JButton("Open media item");
-        deleteMediaItem = new JButton("Delete media item");
-        searchMediaItem = new JButton("Search for media item");
-        importFolder = new JButton("Import media files from folder");
-        folderWatch = new JButton("Select folder to be watched");
-
-        createPlaylist = new JButton("Create Playlist");
-        deletePlaylist = new JButton("Delete Playlist");
-        addPlaylistItem = new JButton("Add item to playlist");
-        removePlaylistItem = new JButton("Remove item from playlist");
-        openPlaylistItem = new JButton("Open playlist item");
-
-        //Adding action listeners for buttons
-        openMediaItem.addActionListener(e -> openItem());
-        deleteMediaItem.addActionListener(e -> deleteitemList());
-        searchMediaItem.addActionListener(e -> searchForItem());
-        importFolder.addActionListener(e -> openFolder());
-        folderWatch.addActionListener(e -> setFolder());
-
-        createPlaylist.addActionListener(e -> createPlaylist());
-        deletePlaylist.addActionListener(e -> deletePlaylist());
-        addPlaylistItem.addActionListener(e -> addItemPlaylistList());
-        removePlaylistItem.addActionListener(e -> removePlaylistItemList());
-        openPlaylistItem.addActionListener(e -> openPlaylistItem());
+        // Defining buttons and adding listeners:
+        defineButtons();
+        addButtonListeners();
 
         // Tabbed pane
         createitemPane = new JTabbedPane();
 
-        // First tabbed pane
-        JPanel nameTypePanel = new JPanel();
-        nameTypePanel.setBackground(Color.LIGHT_GRAY);
-        nameTypePanel.setLayout(new GridLayout(4,0));
-        nameTypePanel.setName("Item name and type");
-
-        JLabel nameL = new JLabel("Name: ");
-        JLabel typeL = new JLabel("Type: ");
-
-        String[] types = {"Image", "Audio", "Video"};
-
-        nameEnter = new JTextField();
-        typeEnter = new JComboBox(types);
-        typeEnter.addActionListener(e -> checkItemType());
-
-        nameTypePanel.add(nameL);
-        nameTypePanel.add(nameEnter);
-        nameTypePanel.add(typeL);
-        nameTypePanel.add(typeEnter);
-
-        // Second tabbed pane
-        JPanel itemMainDetails = new JPanel();
-        itemMainDetails.setBackground(Color.PINK);
-        itemMainDetails.setLayout(new GridLayout(4,2));
-        itemMainDetails.setName("Main item details");
-
-        JLabel formatL = new JLabel("Format: ");
-        JLabel sizeL = new JLabel("Size: ");
-        JLabel durationL = new JLabel("Duration: ");
-        JLabel resolutionL = new JLabel("Resolution: ");
-
-        imageFormats = new String[]{"jpeg", "png", "gif"};
-        audioFormats = new String[]{"mp3", "aac", "wav"};
-        videoFormats = new String[]{"mp4", "mkv", "mov"};
-
-        String[] resolutions = {"320x240", "480x360", "640x480", "1280x720", "1920x1080"};
-
-        formatEnter = new JComboBox(imageFormats);
-        sizeEnter = new JTextField();
-        durationEnter = new JTextField();
-        resolutionEnter = new JComboBox(resolutions);
-
-        itemMainDetails.add(formatL);
-        itemMainDetails.add(formatEnter);
-        itemMainDetails.add(sizeL);
-        itemMainDetails.add(sizeEnter);
-        itemMainDetails.add(durationL);
-        itemMainDetails.add(durationEnter);
-        itemMainDetails.add(resolutionL);
-        itemMainDetails.add(resolutionEnter);
-
-        durationEnter.setEditable(false);
-
-        // Third tabbed pane
-        JPanel submitPanel = new JPanel();
-        subItem = new JButton("Submit");
-        subItem.addActionListener(e -> submitItem());
-
-        submitPanel.setName("Submit item");
-        submitPanel.setBackground(new Color(24, 240, 151));
-        submitPanel.add(subItem);
-
-        // Add tabbed panels
-        createitemPane.add(nameTypePanel);
-        createitemPane.add(itemMainDetails);
-        createitemPane.add(submitPanel);
+        createitemPane.add(defineGetNameTab());
+        createitemPane.add(defineGetDetailsTab());
+        createitemPane.add(defineGetSubmitTab());
 
         //Defining exit button
-        backToMain = new JButton("Go back!");
-        backToMain.addActionListener(e -> goBack());
+        defineExitButton();
 
-        // Defining media items scroll panel
-        mediaItemsModel = new DefaultListModel<>();
-        mediaItemsList = new JList<>(mediaItemsModel);
+        // Defining scroll panes
+        defineMediaItemPane();
+        definePlaylistPane();
+        definePlaylistItemsPane();
 
-        //Double Click event for main media items
-        mediaItemsList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e){
-                if(e.getClickCount() == 2){
-                    mouseDetails(e);
-                }
-            }
-        });
-
-
-        mediaItems = new JScrollPane(mediaItemsList);
-        JLabel itemsHeading = new JLabel("Media items:");
-        mediaItems.setColumnHeaderView(itemsHeading);
-
-        // Defining playlist scroll panel
-        playlistsModel = new DefaultComboBoxModel<>();
-        playlists = new JComboBox<>(playlistsModel);
-        playlists.addActionListener(e -> loadPlaylistItems());
-
-        // Defining playlist media items scroll panel
-        playlistItemsModel = new DefaultListModel<>();
-        playlistItemsList = new JList<>(playlistItemsModel);
-        playlistItems = new JScrollPane(playlistItemsList);
-
-        //Double Click event for playlist media items
-        playlistItemsList.addMouseListener(new MouseAdapter() { //Exact same code as above
-            @Override
-            public void mouseClicked(MouseEvent e){
-                if(e.getClickCount() == 2){
-                    mouseDetails(e);
-                }
-            }
-        });
-
-
-        JLabel playlistItemsHeading = new JLabel("Playlist Items:");
-        playlistItems.setColumnHeaderView(playlistItemsHeading);
-//        playlistItems.setSize(new Dimension(100,100)); may need to change grid to show smaller
-
-        // Main Panels
-
-        // Defining center panel
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new GridLayout(0,3,10,0));
-
-        centerPanel.add(mediaItems);
-        centerPanel.add(playlists);
-        centerPanel.add(playlistItems);
-
-        // Defining bottom panel
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(new Color(24, 240, 151));
-        bottomPanel.setPreferredSize(new Dimension(100,35));
-        bottomPanel.setLayout(new FlowLayout());
-
-        bottomPanel.add(backToMain);
-
-        // Defining right panel and adding buttons
-        JPanel rightPanel = new JPanel();
-        rightPanel.setPreferredSize(new Dimension(200,100));
-        rightPanel.setLayout(new GridLayout(6,0,0,10));
-
-        rightPanel.add(createPlaylist);
-        rightPanel.add(deletePlaylist);
-        rightPanel.add(new JLabel("")); // Made so can add empty cell
-        rightPanel.add(addPlaylistItem);
-        rightPanel.add(removePlaylistItem);
-        rightPanel.add(openPlaylistItem);
-
-        // Defining left panel and adding buttons
-        JPanel leftPanel = new JPanel();
-        leftPanel.setPreferredSize(new Dimension(220,100));
-        leftPanel.setLayout(new GridLayout(5,0,0,10));
-
-        leftPanel.add(openMediaItem);
-        leftPanel.add(deleteMediaItem);
-        leftPanel.add(searchMediaItem);
-        leftPanel.add(importFolder);
-        leftPanel.add(folderWatch);
-
-        // Defining top panel and adding tabbed pane
-        JPanel topPanel = new JPanel();
-        topPanel.setBackground(new Color(24, 240, 151));
-        topPanel.setPreferredSize(new Dimension(100,100));
-        topPanel.setLayout(new GridLayout(0,2));
-        topPanel.add(createitemPane);
-        topPanel.add(title);
-
-        // Adding all panels to frame and setting layout
+        // Adding all main panels to frame and setting layout
         this.setLayout(new BorderLayout());
-        this.add(topPanel, BorderLayout.NORTH);
-        this.add(bottomPanel, BorderLayout.SOUTH);
-        this.add(rightPanel, BorderLayout.EAST);
-        this.add(leftPanel, BorderLayout.WEST);
-        this.add(centerPanel, BorderLayout.CENTER);
 
-        // Configuring user exit
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        this.addWindowListener(new WindowAdapter() {
-//            @Override
-//            public void windowClosing(WindowEvent e) {
-//
-//                goBack();
-//
-//                dispose();
-//            }
-//
-//            @Override
-//            public void windowClosed(WindowEvent e){
-//                new MainPage();
-//            }
-//        });
+        this.add(defineGetTopPanel(), BorderLayout.NORTH);
+        this.add(defineGetBottomPanel(), BorderLayout.SOUTH);
+        this.add(defineGetRightPanel(), BorderLayout.EAST);
+        this.add(defineGetLeftPanel(), BorderLayout.WEST);
+        this.add(defineGetCenterPanel(), BorderLayout.CENTER);
 
         // Main frame details.
         this.setSize(1000,600);
         this.setResizable(false);
+        this.setUndecorated(true);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Finalising frame.
         this.setVisible(true);
 
         // Setting up threading.
@@ -385,38 +200,22 @@ public class LibraryPage extends JFrame implements FileObserver {
         unchangedFile = new File(libraryPath);
 
       String libraryName = name + "json";
-      clonedFile = new File(System.getProperty("java.io.tmpdir"), libraryName);
+//      clonedFile = new File(System.getProperty("java.io.tmpdir"), libraryName);
+        clonedFile = new File(libraryName);
 
-      int suffix = 0;
-      while (clonedFile.exists()){
-          suffix++;
-          clonedFile = File.createTempFile(name + "C", "." + format, new File("Media-Libraries/"));
-          Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-      }
-
-//      try{
-//          if(clonedFile.createNewFile()){
-//            System.out.println("Success!");
-//            Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//          }
-//          else{
-//              System.out.println("NO!");
-//          }
-//      }
-//      catch (IOException e){
-//
-//      }
 
     // THIS ONE WORKS
 //        try {
 //            clonedFile = File.createTempFile(name + "C", "." + format, new File("Media-Libraries/"));
 //            Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 //        } catch (IOException e) {
-//            e.printStackTrace();
+//           System.out.println("File was unable to be processed");
 //        }
 
-        String libraryName2 = name + "C." + format; // Can't add dot alone for some reason
-        clonedFile = new File("Media-Libraries/", libraryName2);
+        // This one is better solution:
+
+        String finalName = name + "C." + format; // Can't add dot alone for some reason
+        clonedFile = new File("Media-Libraries/", finalName);
 
         try {
             Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -442,6 +241,7 @@ public class LibraryPage extends JFrame implements FileObserver {
                 durationEnter.setEditable(false);
                 resolutionEnter.setEnabled(true);
                 formatEnter.removeAllItems();
+
                 for (String iType : imageFormats) {
                     formatEnter.addItem(iType);
                 }
@@ -450,6 +250,7 @@ public class LibraryPage extends JFrame implements FileObserver {
                 durationEnter.setEditable(true);
                 resolutionEnter.setEnabled(false);
                 formatEnter.removeAllItems();
+
                 for (String aType : audioFormats) {
                     formatEnter.addItem(aType);
                 }
@@ -458,6 +259,7 @@ public class LibraryPage extends JFrame implements FileObserver {
                 durationEnter.setEditable(true);
                 resolutionEnter.setEnabled(true);
                 formatEnter.removeAllItems();
+
                 for (String vType : videoFormats) {
                     formatEnter.addItem(vType);
                 }
@@ -466,7 +268,7 @@ public class LibraryPage extends JFrame implements FileObserver {
     }
 
     public void submitItem(){
-        if(checkItemEntered()){
+        if(checkMediaItemEntered()){
             System.out.println("items entered");
 
             String name = nameEnter.getText();
@@ -537,10 +339,10 @@ public class LibraryPage extends JFrame implements FileObserver {
 
     public void createPlaylist(){   // name too similar to component
         String name = JOptionPane.showInputDialog("What is your playlist name?: ");
-
         String type = findType();
 
         Playlist playlist = new Playlist(name, type);
+
         library = new MediaLibrary();
         library.addPlaylist(libraryPath, playlist);
 
@@ -640,11 +442,11 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
-    public boolean checkItemEntered(){
+    public boolean checkMediaItemEntered(){
         boolean nameNotEntered = nameEnter.getText().isEmpty();
         boolean sizeNotEntered = sizeEnter.getText().isEmpty();
 
-        String type = (String) typeEnter.getSelectedItem();
+        String type = (String) typeEnter.getSelectedItem(); //Needed to check that 3 text areas were entered
 
         for(char c : sizeEnter.getText().toCharArray()){
             if(Character.isAlphabetic(c)){
@@ -682,8 +484,10 @@ public class LibraryPage extends JFrame implements FileObserver {
 
     public void openFolder() {
         Search search = Search.getInstance();
+
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
+
         String dirPath = "";
 
         JFileChooser fileChooser = new JFileChooser();
@@ -775,7 +579,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
-        if(library != null){
+        if(library != null){    // Deleting doesn't work if only one item present for items and playlists
             if(!library.getMediaItems().isEmpty()){
                 updateMediaItems(getMediaItems());
             }
@@ -869,5 +673,203 @@ public class LibraryPage extends JFrame implements FileObserver {
         // Look for right place to use invoke later
         SwingUtilities.invokeLater(MainPage::new);
         dispose();
+    }
+    public void defineButtons(){
+        openMediaItem = new JButton("Open media item");
+        deleteMediaItem = new JButton("Delete media item");
+        searchMediaItem = new JButton("Search for media item");
+        importFolder = new JButton("Import media files from folder");
+        folderWatch = new JButton("Select folder to be watched");
+
+        createPlaylist = new JButton("Create Playlist");
+        deletePlaylist = new JButton("Delete Playlist");
+        addPlaylistItem = new JButton("Add item to playlist");
+        removePlaylistItem = new JButton("Remove item from playlist");
+        openPlaylistItem = new JButton("Open playlist item");
+    }
+    public void addButtonListeners(){
+        openMediaItem.addActionListener(e -> openItem());
+        deleteMediaItem.addActionListener(e -> deleteitemList());
+        searchMediaItem.addActionListener(e -> searchForItem());
+        importFolder.addActionListener(e -> openFolder());
+        folderWatch.addActionListener(e -> setFolder());
+
+        createPlaylist.addActionListener(e -> createPlaylist());
+        deletePlaylist.addActionListener(e -> deletePlaylist());
+        addPlaylistItem.addActionListener(e -> addItemPlaylistList());
+        removePlaylistItem.addActionListener(e -> removePlaylistItemList());
+        openPlaylistItem.addActionListener(e -> openPlaylistItem());
+    }
+    public JPanel defineGetNameTab(){
+        JPanel nameTypePanel = new JPanel();
+        nameTypePanel.setBackground(Color.LIGHT_GRAY);
+        nameTypePanel.setLayout(new GridLayout(4,0));
+        nameTypePanel.setName("Item name and type");
+
+        JLabel nameL = new JLabel("Name: ");
+        JLabel typeL = new JLabel("Type: ");
+
+        String[] types = {"Image", "Audio", "Video"};
+
+        nameEnter = new JTextField();
+        typeEnter = new JComboBox(types);
+        typeEnter.addActionListener(e -> checkItemType());
+
+        nameTypePanel.add(nameL);
+        nameTypePanel.add(nameEnter);
+        nameTypePanel.add(typeL);
+        nameTypePanel.add(typeEnter);
+
+        return nameTypePanel;
+    }
+    public JPanel defineGetDetailsTab(){
+        JPanel itemMainDetails = new JPanel();
+        itemMainDetails.setBackground(Color.PINK);
+        itemMainDetails.setLayout(new GridLayout(4,2));
+        itemMainDetails.setName("Main item details");
+
+        JLabel formatL = new JLabel("Format: ");
+        JLabel sizeL = new JLabel("Size: ");
+        JLabel durationL = new JLabel("Duration: ");
+        JLabel resolutionL = new JLabel("Resolution: ");
+
+        imageFormats = new String[]{"jpeg", "png", "gif"};
+        audioFormats = new String[]{"mp3", "aac", "wav"};
+        videoFormats = new String[]{"mp4", "mkv", "mov"};
+
+        String[] resolutions = {"320x240", "480x360", "640x480", "1280x720", "1920x1080"};
+
+        formatEnter = new JComboBox(imageFormats);
+        sizeEnter = new JTextField();
+        durationEnter = new JTextField();
+        resolutionEnter = new JComboBox(resolutions);
+
+        itemMainDetails.add(formatL);
+        itemMainDetails.add(formatEnter);
+        itemMainDetails.add(sizeL);
+        itemMainDetails.add(sizeEnter);
+        itemMainDetails.add(durationL);
+        itemMainDetails.add(durationEnter);
+        itemMainDetails.add(resolutionL);
+        itemMainDetails.add(resolutionEnter);
+
+        durationEnter.setEditable(false);
+
+        return itemMainDetails;
+    }
+    public JPanel defineGetSubmitTab(){
+        JPanel submitPanel = new JPanel();
+        subItem = new JButton("Submit");
+        subItem.addActionListener(e -> submitItem());
+
+        submitPanel.setName("Submit item");
+        submitPanel.setBackground(new Color(24, 240, 151));
+        submitPanel.add(subItem);
+
+        return submitPanel;
+    }
+    public void defineExitButton(){
+        backToMain = new JButton("Go back!");
+        backToMain.addActionListener(e -> goBack());
+    }
+    public void defineMediaItemPane(){
+        mediaItemsModel = new DefaultListModel<>();
+        mediaItemsList = new JList<>(mediaItemsModel);
+
+        mediaItemsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                if(e.getClickCount() == 2){
+                    mouseDetails(e);
+                }
+            }
+        });
+
+        mediaItems = new JScrollPane(mediaItemsList);
+        JLabel itemsHeading = new JLabel("Media items:");
+        mediaItems.setColumnHeaderView(itemsHeading);
+    }
+    public void definePlaylistPane(){
+        playlistsModel = new DefaultComboBoxModel<>();
+        playlists = new JComboBox<>(playlistsModel);    // does accept model
+        playlists.addActionListener(e -> loadPlaylistItems());
+    }
+    public void definePlaylistItemsPane(){
+        playlistItemsModel = new DefaultListModel<>();
+        playlistItemsList = new JList<>(playlistItemsModel);
+        playlistItems = new JScrollPane(playlistItemsList); // doesn't accept model
+
+        playlistItemsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                if(e.getClickCount() == 2){
+                    mouseDetails(e);
+                }
+            }
+        });
+
+        JLabel playlistItemsHeading = new JLabel("Playlist Items:");
+        playlistItems.setColumnHeaderView(playlistItemsHeading);
+    }
+    public JPanel defineGetCenterPanel(){
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new GridLayout(0,3,10,0));
+
+        centerPanel.add(mediaItems);
+        centerPanel.add(playlists);
+        centerPanel.add(playlistItems);
+
+        return centerPanel;
+    }
+    public JPanel defineGetBottomPanel(){
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(new Color(24, 240, 151));
+        bottomPanel.setPreferredSize(new Dimension(100,35));
+        bottomPanel.setLayout(new GridLayout(0,3));
+
+        JLabel clickDetails = new JLabel("(Double click to see media item details)");
+
+        bottomPanel.add(clickDetails);
+        bottomPanel.add(backToMain);
+        bottomPanel.add(new JLabel());
+
+        return bottomPanel;
+    }
+    public JPanel defineGetRightPanel(){
+        JPanel rightPanel = new JPanel();
+        rightPanel.setPreferredSize(new Dimension(200,100));
+        rightPanel.setLayout(new GridLayout(6,0,0,10));
+
+        rightPanel.add(createPlaylist);
+        rightPanel.add(deletePlaylist);
+        rightPanel.add(new JLabel()); // Made so can add empty cell
+        rightPanel.add(addPlaylistItem);
+        rightPanel.add(removePlaylistItem);
+        rightPanel.add(openPlaylistItem);
+
+        return rightPanel;
+    }
+    public JPanel defineGetLeftPanel(){
+        JPanel leftPanel = new JPanel();
+        leftPanel.setPreferredSize(new Dimension(220,100));
+        leftPanel.setLayout(new GridLayout(5,0,0,10));
+
+        leftPanel.add(openMediaItem);
+        leftPanel.add(deleteMediaItem);
+        leftPanel.add(searchMediaItem);
+        leftPanel.add(importFolder);
+        leftPanel.add(folderWatch);
+
+        return leftPanel;
+    }
+    public JPanel defineGetTopPanel(){
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(new Color(24, 240, 151));
+        topPanel.setPreferredSize(new Dimension(100,100));
+        topPanel.setLayout(new GridLayout(0,2));
+        topPanel.add(createitemPane);
+        topPanel.add(title);
+
+        return topPanel;
     }
 }

@@ -2,7 +2,6 @@ package MediaManagement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * MediaManagement.Playlist class handles creation of playlists.
@@ -14,7 +13,7 @@ public class Playlist {
     /** Type of playlist. */
     private String playlistType = "";
     /** Arraylist of Media Item objects */
-    private ArrayList<MediaItem> mediaItems = new ArrayList<>();    // Should I use generics in other places?
+    private ArrayList<MediaItem> mediaItems = new ArrayList<>();
 
     /**
      * Constructor assigns playlist information.
@@ -22,24 +21,37 @@ public class Playlist {
      * @param t playlist type.
      */
     public Playlist(String n, String t){
-        // Need to have either different constructors or if statements to differentiate type here
         this.playlistName = n;
         this.playlistType = t;
     }
 
     /**
-     * Empty constructor so that methods can be accessed
-     * without creating a playlist.
+     * Empty constructor used here for jackson
+     * library to model items off of.
      */
-    public Playlist(){  //KEEP EMPTY CONSTRUCTOR
+    public Playlist(){
     }
-    // DONT DELETE
+
+    /**
+     * Getter
+     * @return playlist name.
+     */
     public String getPlaylistName() {
         return playlistName;
     }
+
+    /**
+     * Getter
+     * @return playlist type.
+     */
     public String getPlaylistType() {
         return playlistType;
     }
+
+    /**
+     * Getter
+     * @return list of media items.
+     */
     public List<MediaItem> getMediaItems(){
         return mediaItems;
     }

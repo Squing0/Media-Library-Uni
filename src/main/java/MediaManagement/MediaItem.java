@@ -8,17 +8,18 @@ public class MediaItem {
     /** Name of media item. */
     private String mediaName;
     /** Type of media item. Either image, audio or video. */
-    private String mediaType;  // Know mot really need to add values but lecturers might like it???
+    private String mediaType;
     /** Format of media item (e.g., mp3). */
     private String format;
     /** Size of media item in megabytes. */
     private double size;
     /** Specific file location of media item. */
     private String fileLocation;
-    /** Track length of audio and video in seconds. */
-    private double trackLength = 0; // initialised to 0 for image
+    /** Track length of audio and video in seconds.
+     * (initialised to 0 for image)*/
+    private double trackLength = 0;
     /** Resolution of images and videos. */
-    private String resolution;    // Make separate constructor for videos to make unique
+    private String resolution;
     /** Describes if file is usable.
      * Manually created files are not. */
     private boolean usability;
@@ -85,7 +86,10 @@ public class MediaItem {
     }
 
 
-    // NEED EMPTY CONSTRUCTOR FOR JACKSON
+    /**
+     * Empty constructor used here for jackson
+     * library to model items off of.
+     */
     public MediaItem(){
     }
 
@@ -106,7 +110,7 @@ public class MediaItem {
         }
 
         if(mediaType.equals("Audio")){
-            resolution = "No resolution";   // shows null otherwise
+            resolution = "No resolution";   // Shows null otherwise
         }
 
         s1 = String.format("%s\n%s\n%s\n%.2f(MB)\n%.2f seconds\n%s\n%s\n%s",
@@ -115,14 +119,43 @@ public class MediaItem {
 
         return s1;
     }
-    // DONT DELTE ANU
+
+    /**
+     * Getter
+     * @return media item name
+     */
     public String getMediaName() {return mediaName;}
+    /**
+     * Getter
+     * @return media item type
+     */
     public String getMediaType() {return mediaType;}
+    /**
+     * Getter
+     * @return media item format
+     */
     public String getFormat() {return format;}
+    /**Getter. (unused getter needed for jackson library)
+     * @return media item size.
+     */
     public double getSize() {return size;}
+    /**
+     * Getter
+     * @return media item location.
+     */
     public String getFileLocation() {return fileLocation;}
+    /**Getter. (unused getter needed for jackson library)
+     * @return media item track length (if applicable).
+     */
     public double getTrackLength(){return trackLength;}
+    /**Getter. (unused getter needed for jackson library)
+     * @return media item resolution (if applicable).
+     */
     public String getResolution(){return resolution;}
+    /**
+     * Getter
+     * @return media item usability.
+     */
     public boolean getUsability(){return usability;}
 }
 

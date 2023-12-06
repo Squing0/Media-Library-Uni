@@ -1,7 +1,6 @@
 package GUI;
 
 import FileManagement.FileManager;
-import MediaManagement.MediaLibrary;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainPage extends JFrame {
+    private FileManager fm;
     private JScrollPane libraries;
     private JList mediaLibraryItems;
     private DefaultListModel<String> mediaLibraryModel;
@@ -27,58 +27,27 @@ public class MainPage extends JFrame {
         this.setLayout(new BorderLayout());
 
         // Defining model
-        mediaLibraryModel = new DefaultListModel<>();
-        mediaLibraryItems = new JList<>(mediaLibraryModel);
-
-        // Title
-        JLabel title = new JLabel("Media Library Organiser");
-        title.setFont(new Font("Helvetica", Font.BOLD, 40));
-        title.setForeground(Color.BLACK);
+        defineLibraryModel();
 
         // Defining JScrollPanel
-        JLabel columnHeader = new JLabel("Media Libraries");
-
-        libraries = new JScrollPane(mediaLibraryItems);
-        libraries.setColumnHeaderView(columnHeader);
-        libraries.setPreferredSize(new Dimension(400, 300));
-
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new FlowLayout());
-
-        centerPanel.add(libraries);
-        this.add(centerPanel);
+        defineLibraryPane();
 
         // Buttons for bottom panel
-        createLib = new JButton("Create Library");
-        deleteLib = new JButton("Delete Library");
-        openLib = new JButton("Open Library");
+        defineButtons();
 
-        deleteLib.addActionListener(e -> deleteLibrary());
-        createLib.addActionListener(e -> addLibraryToList());
-        openLib.addActionListener(e -> openSpecificLibrary());
+        // Defining bottom panel
+        defineGetBottomPanel();
 
-        // Defining panels
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(new Color(24, 240, 151));
-        bottomPanel.setPreferredSize(new Dimension(80,80));
-        bottomPanel.setLayout(new GridLayout(0,3,10,0));
-        bottomPanel.add(openLib);
-        bottomPanel.add(createLib);
-        bottomPanel.add(deleteLib);
-
+        // Defining right and left panel
         JPanel rightPanel = new JPanel();
         JPanel leftPanel = new JPanel();
 
-        JPanel topPanel = new JPanel();
-        topPanel.setBackground(new Color(24, 240, 151));
-        topPanel.add(title);
-
         // Adding panels
-        this.add(topPanel, BorderLayout.NORTH);
-        this.add(bottomPanel, BorderLayout.SOUTH);
+        this.add(defineGetTopPanel(), BorderLayout.NORTH);
+        this.add(defineGetBottomPanel(), BorderLayout.SOUTH);
         this.add(rightPanel, BorderLayout.EAST);
         this.add(leftPanel, BorderLayout.WEST);
-        this.add(centerPanel, BorderLayout.CENTER);
+        this.add(defineGetCenterPane(), BorderLayout.CENTER);
 
         // Finalising JFrame
         this.pack();
@@ -113,8 +82,6 @@ public class MainPage extends JFrame {
 
             libraryNames.add(nameAndFormat);
 
-            // Same method using in search class
-            // USE INTERFACE HERE?
         }
         return libraryNames;
     }
@@ -127,9 +94,7 @@ public class MainPage extends JFrame {
             if(!checkLibraryPresent(name)){
                 String path = "Media-Libraries/" + name + ".json";
 
-                MediaLibrary library = new MediaLibrary();
-//                library.createMediaLibrary(path, name);
-                FileManager fm = new FileManager();
+                fm = new FileManager();
                 fm.createLibraryFile(path, name);
 
                 mediaLibraryModel.addElement(name + ".json");
@@ -194,9 +159,9 @@ public class MainPage extends JFrame {
 
         if(selectedIndex != -1){
             String specificLibrary = mediaLibraryModel.getElementAt(selectedIndex);
-
             mediaLibraryModel.remove(selectedIndex);
-            FileManager fm = new FileManager();
+
+            fm = new FileManager();
             fm.deleteFile(librariesLocation, specificLibrary);
 
             JOptionPane.showMessageDialog(null,
@@ -210,5 +175,57 @@ public class MainPage extends JFrame {
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+    public void defineLibraryModel(){
+        mediaLibraryModel = new DefaultListModel<>();
+        mediaLibraryItems = new JList<>(mediaLibraryModel);
+    }
+
+    public JLabel defineGetTitle(){
+        JLabel title = new JLabel("Media Library Organiser");
+        title.setFont(new Font("Helvetica", Font.BOLD, 40));
+        title.setForeground(Color.BLACK);
+        return title;
+    }
+    public void defineLibraryPane(){
+        JLabel columnHeader = new JLabel("Media Libraries");
+
+        libraries = new JScrollPane(mediaLibraryItems);
+        libraries.setColumnHeaderView(columnHeader);
+        libraries.setPreferredSize(new Dimension(400, 300));
+    }
+    public JPanel defineGetCenterPane(){
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new FlowLayout());
+
+        centerPanel.add(libraries);
+        return centerPanel;
+    }
+    public void defineButtons(){
+        createLib = new JButton("Create Library");
+        deleteLib = new JButton("Delete Library");
+        openLib = new JButton("Open Library");
+
+        deleteLib.addActionListener(e -> deleteLibrary());
+        createLib.addActionListener(e -> addLibraryToList());
+        openLib.addActionListener(e -> openSpecificLibrary());
+    }
+    public JPanel defineGetBottomPanel(){
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(new Color(24, 240, 151));
+        bottomPanel.setPreferredSize(new Dimension(80,80));
+        bottomPanel.setLayout(new GridLayout(0,3,10,0));
+        bottomPanel.add(openLib);
+        bottomPanel.add(createLib);
+        bottomPanel.add(deleteLib);
+
+        return bottomPanel;
+    }
+    public JPanel defineGetTopPanel(){
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(new Color(24, 240, 151));
+        topPanel.add(defineGetTitle());
+
+        return topPanel;
     }
 }

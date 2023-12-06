@@ -9,10 +9,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Search {
     private static final Search instance = new Search();
@@ -51,7 +48,7 @@ public class Search {
         MediaLibrary library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryFl);
 
-        if(!library.mediaItemAlreadyPresent(library, name, format)) { //Make simpler, how is the library location gotten?
+        if(library.mediaItemAlreadyPresent(library, name, format)) { //Make simpler, how is the library location gotten?
             switch (formatCorrect) {
                 case "Image" -> {
                     type = "Image";
@@ -78,17 +75,17 @@ public class Search {
             }
         }
         else{
-                System.out.println("File with that name and format already exists!");
+            System.out.println("File with that name and format already exists!");
         }
     }
 
     public void searchDirectory(String fd, String libraryFl) {
-        Search search = new Search();
+        Search search = Search.getInstance();
 
         File dir = new File(fd);
         File[] files = dir.listFiles();     // Assumes that there are no subdirectories
+
         for (File file : files){
-            System.out.println();
             try {
                 search.typeVerify(file.getAbsolutePath().replace("\\", "/"), libraryFl);
             }
@@ -96,11 +93,9 @@ public class Search {
                 System.out.println("There was an error handling the directory!");   // FIX THIS LATER
             }
             catch (InterruptedException e) {
-                System.out.println("IDK");
+                System.out.println("Error handling file");
             }
         }
-
-        // Need to have error handling in case file, isn't media file
     }
 
     public MediaItem searchForItem(MediaLibrary library, String name, String type){
@@ -125,6 +120,25 @@ public class Search {
 //
 //        Collections.sort(itemNames);
 //        Collections.sort(itemTypes);
+//
+//        boolean nameCheck = false;
+//        boolean typeCheck = false;
+//
+//        for(String name2 : itemNames){
+//            if(name2.equals(name)){
+//                nameCheck = true;
+//            }
+//        }
+//
+//        for(String type2 : itemTypes){
+//            typeCheck = true;
+//        }
+//
+//        if(nameCheck && typeCheck){
+//
+//        }
+//
+//        return null;
 
         MediaItem item = new MediaItem(name, type, null, 0, null, 0, null, false);
 
@@ -169,14 +183,13 @@ public class Search {
             System.out.println("There was an error handling the file!");
         }
 
-        double kilobytes = bytes / 1024;
-        double megabytes = kilobytes / 1024;
+        double kilobytes = (double) bytes / 1024;
 
-        return megabytes;
+        return kilobytes / 1024;
     }
-    public String getImageResolution(String fl)  {  // Use try and catch and finally clause?
-        //getting resolution
+    public String getImageResolution(String fl)  {
         BufferedImage image = null;
+
         try {
             image = ImageIO.read(new File(fl));
         } catch (IOException e) {
@@ -187,32 +200,31 @@ public class Search {
         int width = image.getWidth();
 
         return height + "x" + width;
-
     }
 
-    public String accessMediaSpecific(String action) { // awful name lol
+    public String accessMediaSpecific(String action) {
         String ffprobePath = "ffmpeg-2023-11-13-git-67a2571a55-full_build/bin/ffprobe.exe";
 
         String command = ffprobePath + action;
 
-        ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
+        ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+")); //Removes whitespace charactes
         Process process;
         String ffprobeOutput = "";
+        String line;
 
         try {
             process = processBuilder.start();
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
             StringBuilder output = new StringBuilder();
 
-            while((line = reader.readLine()) != null){
-                output.append(line);
-            }
+            line = reader.readLine();
+            output.append(line);
 
             ffprobeOutput = output.toString();
             reader.close();
         } catch (IOException e) {
-            System.out.println("Command failed!");
+            System.out.println("Command couldn't execute!");
         }
 
        return ffprobeOutput;
