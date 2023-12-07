@@ -139,6 +139,15 @@ public class MediaLibrary {
         System.out.println("Success!");
     }
 
+    /**
+     * Deletes media item from json file by reading file into library object,
+     * finding a media items, removing it from the library, checking all playlists
+     * to see if a media item with the same name and format is also in it and removes this
+     * if an item is found. This is then written to the json file.
+     * @param fl File location of media library.
+     * @param itemName Name of media item.
+     * @param itemFormat Format of media item.
+     */
     public void deleteMediaItem(String fl, String itemName, String itemFormat){
         MediaLibrary library = getLibraryFromJson(fl);
         MediaItem specific = checkNameFormat(library, itemName, itemFormat);
@@ -146,8 +155,9 @@ public class MediaLibrary {
         library.getMediaItems().remove(specific);
 
         for(Playlist playlist : library.getPlaylists()){
-            // EXPLAIN THIS
-            playlist.getMediaItems().removeIf(item -> item.getMediaName().equals(itemName) && item.getFormat().equals(itemFormat));
+            playlist.getMediaItems().removeIf(item ->
+                    item.getMediaName().equals(itemName)
+                            && item.getFormat().equals(itemFormat));    // EXPLAIN HERE??????????????????????????????????????
         }
 
         writeLibraryToJson(library, fl);
@@ -157,7 +167,9 @@ public class MediaLibrary {
         MediaLibrary library = getLibraryFromJson(fl);
         Playlist specific = findPlaylist(library, playlistName, playlistType);
 
-        specific.getMediaItems().removeIf(item -> item.getMediaName().equals(mediaName) && item.getFormat().equals(mediaFormat));
+        specific.getMediaItems().removeIf(item ->
+                item.getMediaName().equals(mediaName)
+                        && item.getFormat().equals(mediaFormat));
 
         writeLibraryToJson(library, fl);
     }
