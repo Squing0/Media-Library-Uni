@@ -17,7 +17,7 @@ import java.util.List;
 public class LibraryPage extends JFrame implements FileObserver {
     private MediaLibrary library;
     private FileManager fm;
-    private Thread watchThread;
+    private Thread folderThread;
     private File unchangedFile;
     private File clonedFile;
     private JButton backToMain;
@@ -101,9 +101,9 @@ public class LibraryPage extends JFrame implements FileObserver {
         this.setVisible(true);
 
         // Setting up threading.
-        fm = new FileManager(this::onFileCreated);
-        watchThread = new Thread(fm);
-        watchThread.start();
+        fm = new FileManager(this::onFileChanged);
+        folderThread = new Thread(fm);
+        folderThread.start();
 
         // Loading library data to UI.
         loadData();
@@ -126,11 +126,17 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         if(item != null){
             JOptionPane.showMessageDialog(this, item.printAllItemDetails());
-            int choice = JOptionPane.showConfirmDialog(this, "Open media item?", "Open?", JOptionPane.YES_NO_OPTION);
+            int choice = JOptionPane.showConfirmDialog(this,
+                    "Open media item?",
+                    "Open?",
+                    JOptionPane.YES_NO_OPTION);
 
             if(choice == JOptionPane.YES_OPTION){
                 if(!item.getUsability()){
-                    JOptionPane.showMessageDialog(null, "File isn't usable as was manually created!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,
+                            "File isn't usable as was manually created!",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -156,7 +162,10 @@ public class LibraryPage extends JFrame implements FileObserver {
         MediaItem item = getMediaItemFromList(selectedItem);
         String details = item.printAllItemDetails();
 
-        JOptionPane.showMessageDialog(null, details, "Success!", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null,
+                details,
+                "Success!",
+                JOptionPane.INFORMATION_MESSAGE);
 
         System.out.println(item.getMediaName());
     }
@@ -168,7 +177,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         int response = fileChooser.showOpenDialog(null);
         String path;
 
-        fm = new FileManager(this::onFileCreated);
+        fm = new FileManager(this::onFileChanged);
 
         if(response == JFileChooser.APPROVE_OPTION){
            path = fileChooser.getSelectedFile().getAbsolutePath().replace("\\", "/");
@@ -176,18 +185,26 @@ public class LibraryPage extends JFrame implements FileObserver {
            fm.setFolderLocation(path);
            fm.setLibraryPath(libraryPath);
 
-           if(watchThread != null){
-               watchThread.interrupt();
+           if(folderThread != null){    // Ensures thread is active
+               folderThread.interrupt();  // Signals to filemanager
+
                try{
-                   watchThread.join();
+                   folderThread.join(); // Waits for thread to fully finish
                }
                catch (InterruptedException e){
-                   e.printStackTrace();
+                  System.out.println("Interruption in thread!");
                }
            }
 
-           watchThread = new Thread(fm);
-           watchThread.start();
+//            try {
+//                folderThread.join();
+//            }
+//            catch (InterruptedException e){
+//                System.out.println("Interrruption in thread!");
+//            }
+
+            folderThread = new Thread(fm);
+            folderThread.start();
         }
     }
 
@@ -200,19 +217,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         unchangedFile = new File(libraryPath);
 
       String libraryName = name + "json";
-//      clonedFile = new File(System.getProperty("java.io.tmpdir"), libraryName);
         clonedFile = new File(libraryName);
-
-
-    // THIS ONE WORKS
-//        try {
-//            clonedFile = File.createTempFile(name + "C", "." + format, new File("Media-Libraries/"));
-//            Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//        } catch (IOException e) {
-//           System.out.println("File was unable to be processed");
-//        }
-
-        // This one is better solution:
 
         String finalName = name + "C." + format; // Can't add dot alone for some reason
         clonedFile = new File("Media-Libraries/", finalName);
@@ -223,7 +228,6 @@ public class LibraryPage extends JFrame implements FileObserver {
         catch (IOException e){
             System.out.println("Error!");
         }
-
     }
 
     public void saveChoice(){
@@ -304,11 +308,17 @@ public class LibraryPage extends JFrame implements FileObserver {
 
             loadData();
 
-            JOptionPane.showMessageDialog(null, "Item added!", "Success!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Item added!",
+                    "Success!",
+                    JOptionPane.INFORMATION_MESSAGE);
 
         }
         else{
-            JOptionPane.showMessageDialog(null, "Enter all details in correct format!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Enter all details in correct format!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -326,14 +336,20 @@ public class LibraryPage extends JFrame implements FileObserver {
 
             if(!item.getUsability()){
                 fm = new FileManager();
-                fm.deleteFile("Created-Files", item.getMediaName() + "." + item.getFormat());
+                fm.deleteFile("Created-Files",
+                        item.getMediaName() + "." + item.getFormat());
             }
-            JOptionPane.showMessageDialog(null, item.getMediaName() + " deleted!", "Success!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    item.getMediaName() + " deleted!",
+                    "Success!",
+                    JOptionPane.INFORMATION_MESSAGE);
 
             loadData();
         }
         else{
-            JOptionPane.showMessageDialog(null, "No media item selected", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "No media item selected",
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -384,7 +400,10 @@ public class LibraryPage extends JFrame implements FileObserver {
         library = new MediaLibrary();
         library.deletePlaylist(libraryPath, name, type);
 
-        JOptionPane.showMessageDialog(null, name + " deleted!", "Success!", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null,
+                name + " deleted!",
+                "Success!",
+                JOptionPane.INFORMATION_MESSAGE);
 
         loadData();
     }
@@ -412,7 +431,10 @@ public class LibraryPage extends JFrame implements FileObserver {
             loadData();
         }
         else{
-            JOptionPane.showMessageDialog(null, "No playlist item selected", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "No playlist item selected",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -438,7 +460,10 @@ public class LibraryPage extends JFrame implements FileObserver {
             loadData();
         }
         else{
-            JOptionPane.showMessageDialog(null, "No playlist item selected", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "No playlist item selected",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -526,7 +551,10 @@ public class LibraryPage extends JFrame implements FileObserver {
             MediaItem item = getMediaItemFromList(itemInfo);
 
             if(!item.getUsability()){
-                JOptionPane.showMessageDialog(null, "File isn't usable as was manually created!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,
+                        "File isn't usable as was manually created!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -534,7 +562,10 @@ public class LibraryPage extends JFrame implements FileObserver {
             fm.openMediaItem(path);
         }
         else{
-            JOptionPane.showMessageDialog(null, "No media item selected", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "No media item selected",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -549,7 +580,10 @@ public class LibraryPage extends JFrame implements FileObserver {
             MediaItem item = getMediaItemFromList(itemInfo);
 
             if(!item.getUsability()){
-                JOptionPane.showMessageDialog(null, "File isn't usable as was manually created!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,
+                        "File isn't usable as was manually created!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -557,7 +591,10 @@ public class LibraryPage extends JFrame implements FileObserver {
             fm.openMediaItem(path);
         }
         else{
-            JOptionPane.showMessageDialog(null, "No playlist item selected", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "No playlist item selected",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -592,8 +629,8 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
-    public void onFileCreated(Path fl){
-        SwingUtilities.invokeLater(() -> {  // For file manager
+    public void onFileChanged(Path fl){
+        SwingUtilities.invokeLater(() -> {
             loadData();
         });
     }
@@ -610,7 +647,9 @@ public class LibraryPage extends JFrame implements FileObserver {
     public void updateMediaItems(List<MediaItem> items){
         mediaItemsModel.clear();
         for(MediaItem item : items){
-            mediaItemsModel.addElement(item.getMediaName() + ", " + item.getMediaType() + ", " + item.getFormat());
+            mediaItemsModel.addElement(item.getMediaName()
+                    + ", " + item.getMediaType()
+                    + ", " + item.getFormat());
         }
 
     }
@@ -626,7 +665,8 @@ public class LibraryPage extends JFrame implements FileObserver {
 //        playlistComboBoxModel.clear();
         playlistsModel.removeAllElements();
             for(Playlist playlist : playlists){
-                playlistsModel.addElement(playlist.getPlaylistName() + ", " + playlist.getPlaylistType());
+                playlistsModel.addElement(playlist.getPlaylistName()
+                        + ", " + playlist.getPlaylistType());
             }
 
     }
@@ -644,7 +684,9 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         if(playlistItems != null){
             for(MediaItem item : playlistItems){
-                playlistItemsModel.addElement(item.getMediaName() + ", " + item.getMediaType() + ", " + item.getFormat());
+                playlistItemsModel.addElement(item.getMediaName() +
+                        ", " + item.getMediaType() +
+                        ", " + item.getFormat());
             }
         }
     }

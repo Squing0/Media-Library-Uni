@@ -2,5 +2,13 @@
   "libraryName" : "adw",
   "location" : "Media-Libraries/adw.json",
   "mediaItems" : [ ],
-  "playlists" : [ ]
+  "playlists" : [ {
+    "playlistName" : "sdf",
+    "playlistType" : "Image",
+    "mediaItems" : [ ]
+  }, {
+    "playlistName" : "sf",
+    "playlistType" : "Image",
+    "mediaItems" : [ ]
+  } ]
 }

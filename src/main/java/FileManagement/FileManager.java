@@ -5,11 +5,13 @@ import MediaManagement.MediaLibrary;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.nio.file.*;
 import java.io.IOException;
+import static java.nio.file.StandardWatchEventKinds.*;
 
 public class FileManager implements Runnable{
     private String folderLocation = "";
@@ -26,45 +28,70 @@ public class FileManager implements Runnable{
     public synchronized void watchFolder() throws IOException { //Made synchronized just to make sure
 
         try {
-            Path dir = Paths.get(folderLocation);
-            WatchService ws = FileSystems.getDefault().newWatchService();
-            dir.register(ws, StandardWatchEventKinds.ENTRY_CREATE);
+            Path myDir = Paths.get(folderLocation);
+//            WatchService watcher = FileSystems.getDefault().newWatchService();
+            WatchService watcher = myDir.getFileSystem().newWatchService();
 
-            while (true){
+            myDir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
+            WatchKey key = watcher.take();
+
+            //Change to true and put key in loop if having problems
+            while (key != null){
                 if(Thread.interrupted()){
                     break;
                 }
-                WatchKey key;
-                try{
-                    key = ws.take();
-                }
-                catch (InterruptedException e){
-                    break;
-                }
 
-                    for (WatchEvent<?> event : key.pollEvents()) {
-                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-                            Path createdFilePath = dir.resolve((Path) event.context());
+
+//                try{
+//                    key = watcher.take();
+//                }
+//                catch (InterruptedException e){
+//                    break;
+//                }
+
+                List<WatchEvent<?>> events = key.pollEvents();
+
+                    for (WatchEvent event : events) {
+                        if (event.kind() == ENTRY_CREATE) {
+                            Path createdFilePath = myDir.resolve((Path) event.context());
                             SwingUtilities.invokeLater(() -> System.out.println("File processed"));
 
                             Search search = Search.getInstance();
                             search.typeVerify(createdFilePath.toString().replace("\\", "/"), libraryPath);
 
-                            observer.onFileCreated(createdFilePath);
+                            observer.onFileChanged(createdFilePath);
+                        }
+
+                        if(event.kind() == ENTRY_DELETE){
+                            Path deletedFilePath = myDir.resolve((Path) event.context());
+
+                            String fullPath = deletedFilePath.toString();
+                            String[] slashes = fullPath.split("\\\\");  //used as backslashes were present
+                            String nameAndFormat = slashes[slashes.length - 1];
+
+                            // split using dot and use last instance in case name also has dots in it
+                            String[] dots = nameAndFormat.split("\\.");
+                            String name = dots[0];
+                            String format = dots[dots.length - 1];
+
+                            SwingUtilities.invokeLater(() -> System.out.println("File deleted"));
+
+                            MediaLibrary library = new MediaLibrary();
+                            library.deleteMediaItem(libraryPath, name, format);
+
+                            observer.onFileChanged(deletedFilePath);
                         }
 
                 }
 
-                boolean valid = key.reset();
-                if(!valid){
+                boolean verified = key.reset();
+                if(!verified){  // If key isn't valid then directory in accessible so break loop
                     break;
                 }
-
             }
-
         }
         catch (IOException | InterruptedException e){
-            e.printStackTrace();
+            System.out.println("Error watching file");
         }
 
 

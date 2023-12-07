@@ -17,13 +17,7 @@ public class Search {
     public static Search getInstance(){
         return instance;
     }
-    public void typeVerify2(String fl){
 
-    }
-
-    public void importFile(){
-
-    }
     public void typeVerify(String itemFl, String libraryFl) throws InterruptedException, IOException {
         // Use this method to check if image, audio or video and if file type correct before extracting info
         String[] slashes = itemFl.split("/");
@@ -100,7 +94,7 @@ public class Search {
 
     public MediaItem searchForItem(MediaLibrary library, String name, String type){
         for(MediaItem mediaItem: library.getMediaItems()){
-            // LOOK INTO STREAMS OR BINARY SEARCH
+
             if (mediaItem.getMediaName().equals(name) && mediaItem.getMediaType().equals(type)){    // Just copied
                 return mediaItem;
             }
@@ -109,52 +103,6 @@ public class Search {
         return null;
     }
 
-    public MediaItem binarySearchTrial(MediaLibrary library, String name, String type){   //change name
-//        Vector<String> itemNames = new Vector<>();
-//        Vector<String> itemTypes = new Vector<>();
-//
-//        for(MediaItem item : library.getMediaItems()){
-//            itemNames.add(item.getMediaName());
-//            itemTypes.add(item.getMediaType());
-//        }
-//
-//        Collections.sort(itemNames);
-//        Collections.sort(itemTypes);
-//
-//        boolean nameCheck = false;
-//        boolean typeCheck = false;
-//
-//        for(String name2 : itemNames){
-//            if(name2.equals(name)){
-//                nameCheck = true;
-//            }
-//        }
-//
-//        for(String type2 : itemTypes){
-//            typeCheck = true;
-//        }
-//
-//        if(nameCheck && typeCheck){
-//
-//        }
-//
-//        return null;
-
-        MediaItem item = new MediaItem(name, type, null, 0, null, 0, null, false);
-
-        Comparator<MediaItem> comparator = Comparator.
-                comparing(MediaItem::getMediaName).
-                thenComparing(MediaItem::getMediaType);
-
-        int index = Collections.binarySearch(library.getMediaItems(), item, comparator);
-
-        if (index >= 0){
-            return library.getMediaItems().get(index);
-        }
-        else{
-            return null;
-        }
-    }
     public String findFormat(String format){
         List<String> imageFormats = Arrays.asList("jpeg","png","gif");
         List<String> audioFormats = Arrays.asList("mp3", "aac", "wav");
