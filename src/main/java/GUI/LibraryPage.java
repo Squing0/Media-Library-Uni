@@ -293,7 +293,7 @@ public class LibraryPage extends JFrame implements FileObserver {
             library = new MediaLibrary();
             library.addMedia(libraryPath, item);
 
-            fm.createMediaFileBasic(fl);
+            fm.createMediaFile(fl);
 
             loadData();
 

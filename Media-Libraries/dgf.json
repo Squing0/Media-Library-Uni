@@ -28,6 +28,24 @@
     "trackLength" : 0.0,
     "resolution" : "600x453",
     "usability" : true
+  }, {
+    "mediaName" : "sdfs",
+    "mediaType" : "Image",
+    "format" : "jpeg",
+    "size" : 12.0,
+    "fileLocation" : "Created-Files/sdfs.jpeg",
+    "trackLength" : 0.0,
+    "resolution" : "320x240",
+    "usability" : false
+  }, {
+    "mediaName" : "Lyle",
+    "mediaType" : "Image",
+    "format" : "jpeg",
+    "size" : 12.0,
+    "fileLocation" : "Created-Files/Lyle.jpeg",
+    "trackLength" : 0.0,
+    "resolution" : "320x240",
+    "usability" : false
   } ],
   "playlists" : [ {
     "playlistName" : "ad",
