@@ -728,25 +728,35 @@ public class LibraryPage extends JFrame implements FileObserver {
         return playlists;
     }
 
+    /**
+     * Updates playlist items in UI
+     * @param playlistItems List of playlist items in library.
+     */
     public void updatePlaylistItems(List<MediaItem> playlistItems){
-        playlistItemsModel.clear();
+        playlistItemsModel.clear(); // Clears playlist items model.
 
         if(playlistItems != null){
-            for(MediaItem item : playlistItems){
-                playlistItemsModel.addElement(item.getMediaName() +
+            for(MediaItem item : playlistItems){    // Loops through media items in specific playlist
+                playlistItemsModel.addElement(item.getMediaName() + //Adds name, type and format with commas between.
                         ", " + item.getMediaType() +
                         ", " + item.getFormat());
             }
         }
     }
 
+    /**
+     * Creates list of playlist items and gets from playlist in library.
+     * @param name Name of playlist to be checked.
+     * @param type Type of playlist to be checked.
+     * @return List of playlist items.
+     */
     public List<MediaItem> getPlaylistItems(String name, String type){
         List<MediaItem> playlistItems;
 
-        Playlist specific = library.findPlaylist(library, name, type);
-        playlistItems = specific.getMediaItems();
+        Playlist specific = library.findPlaylist(library, name, type);  // Find specific playlist
+        playlistItems = specific.getMediaItems();   // Retrieve items
 
-        return playlistItems;
+        return playlistItems;   // Add to created list.
     }
     /**
      * Loads playlist items into playlist items list depending on playlist selected.
@@ -759,7 +769,7 @@ public class LibraryPage extends JFrame implements FileObserver {
             String name = nameAndType[0];
             String type = nameAndType[1].trim();    // Comma used to get info
 
-            updatePlaylistItems(getPlaylistItems(name, type));
+            updatePlaylistItems(getPlaylistItems(name, type));  // Items updated with specific name and type of playlist.
         }
     }
     public void defineButtons(){
