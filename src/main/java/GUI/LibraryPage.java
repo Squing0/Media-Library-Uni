@@ -25,7 +25,7 @@ public class LibraryPage extends JFrame implements FileObserver {
     private JButton importFolder;
     private JButton folderWatch;
     private JButton deleteMediaItem;
-    private JButton searchMediaItem;    // Make actual methods have more specific names
+    private JButton searchMediaItem;
     private JButton createPlaylist;
     private JButton deletePlaylist;
     private JButton addPlaylistItem;
@@ -35,16 +35,12 @@ public class LibraryPage extends JFrame implements FileObserver {
     private JScrollPane mediaItems;
     private JList mediaItemsList;
     private DefaultListModel<String> mediaItemsModel;
-//    private JComboBox playlists;
-//    private JList playlistList;
-//    private DefaultListModel<String> playlistModel;
     private JComboBox<String> playlists;
-    private JList playlistsList; // Trying to keep consistent, if not then explain
     private DefaultComboBoxModel<String> playlistsModel;
     private JScrollPane playlistItems;
     private JList playlistItemsList;
     private DefaultListModel<String> playlistItemsModel;
-    private JTabbedPane createitemPane;
+    private JTabbedPane createItemPane;
     private JComboBox typeEnter;
     private JTextField durationEnter;
     private JComboBox resolutionEnter;
@@ -68,11 +64,11 @@ public class LibraryPage extends JFrame implements FileObserver {
         addButtonListeners();
 
         // Tabbed pane
-        createitemPane = new JTabbedPane();
+        createItemPane = new JTabbedPane();
 
-        createitemPane.add(defineGetNameTab());
-        createitemPane.add(defineGetDetailsTab());
-        createitemPane.add(defineGetSubmitTab());
+        createItemPane.add(defineGetNameTab());
+        createItemPane.add(defineGetDetailsTab());
+        createItemPane.add(defineGetSubmitTab());
 
         //Defining exit button
         defineExitButton();
@@ -112,7 +108,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         try {
             setUpFiles();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error handling the file");
         }
     }
 
@@ -150,7 +146,6 @@ public class LibraryPage extends JFrame implements FileObserver {
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     public void mouseDetails(MouseEvent e){
@@ -166,8 +161,6 @@ public class LibraryPage extends JFrame implements FileObserver {
                 details,
                 "Success!",
                 JOptionPane.INFORMATION_MESSAGE);
-
-        System.out.println(item.getMediaName());
     }
     public void setFolder() {
         JFileChooser fileChooser = new JFileChooser();
@@ -175,8 +168,12 @@ public class LibraryPage extends JFrame implements FileObserver {
         fileChooser.setCurrentDirectory(new File("."));
 
         int response = fileChooser.showOpenDialog(null);
-        String path;
 
+        if(response == JFileChooser.CANCEL_OPTION){
+            return;
+        }
+
+        String path;
         fm = new FileManager(this::onFileChanged);
 
         if(response == JFileChooser.APPROVE_OPTION){
@@ -186,7 +183,7 @@ public class LibraryPage extends JFrame implements FileObserver {
            fm.setLibraryPath(libraryPath);
 
            if(folderThread != null){    // Ensures thread is active
-               folderThread.interrupt();  // Signals to filemanager
+               folderThread.interrupt();  // Signals to file manager
 
                try{
                    folderThread.join(); // Waits for thread to fully finish
@@ -195,13 +192,6 @@ public class LibraryPage extends JFrame implements FileObserver {
                   System.out.println("Interruption in thread!");
                }
            }
-
-//            try {
-//                folderThread.join();
-//            }
-//            catch (InterruptedException e){
-//                System.out.println("Interrruption in thread!");
-//            }
 
             folderThread = new Thread(fm);
             folderThread.start();
@@ -216,7 +206,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         unchangedFile = new File(libraryPath);
 
-      String libraryName = name + "json";
+        String libraryName = name + "json";
         clonedFile = new File(libraryName);
 
         String finalName = name + "C." + format; // Can't add dot alone for some reason
@@ -226,7 +216,7 @@ public class LibraryPage extends JFrame implements FileObserver {
             Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
         catch (IOException e){
-            System.out.println("Error!");
+            System.out.println("Error handling file.");
         }
     }
 
@@ -273,7 +263,6 @@ public class LibraryPage extends JFrame implements FileObserver {
 
     public void submitItem(){
         if(checkMediaItemEntered()){
-            System.out.println("items entered");
 
             String name = nameEnter.getText();
             String type = (String) typeEnter.getSelectedItem();
@@ -285,7 +274,7 @@ public class LibraryPage extends JFrame implements FileObserver {
             String resolution = "No resolution";
             double trackLength = 0;
 
-            MediaItem item = new MediaItem();   // Not sure if will work as also initialised below
+            MediaItem item = new MediaItem();   // Not sure if it will work as also initialised below
 
             if(type.equals("Video")){
                 resolution = (String) resolutionEnter.getSelectedItem();
@@ -309,8 +298,8 @@ public class LibraryPage extends JFrame implements FileObserver {
             loadData();
 
             JOptionPane.showMessageDialog(null,
-                    "Item added!",
-                    "Success!",
+                    "Process finished",
+                    "Success",
                     JOptionPane.INFORMATION_MESSAGE);
 
         }
@@ -322,7 +311,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
-    public void deleteitemList() {
+    public void deleteItemList() {
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
@@ -332,13 +321,14 @@ public class LibraryPage extends JFrame implements FileObserver {
             String itemInfo = mediaItemsModel.getElementAt(selectedIndex);
             MediaItem item = getMediaItemFromList(itemInfo);
 
-            library.deleteMediaItem(libraryPath, item.getMediaName(), item.getFormat());    // Look for more efficient way
+            library.deleteMediaItem(libraryPath, item.getMediaName(), item.getFormat());
 
             if(!item.getUsability()){
                 fm = new FileManager();
                 fm.deleteFile("Created-Files",
                         item.getMediaName() + "." + item.getFormat());
             }
+
             JOptionPane.showMessageDialog(null,
                     item.getMediaName() + " deleted!",
                     "Success!",
@@ -353,8 +343,12 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
-    public void createPlaylist(){   // name too similar to component
+    public void createPlaylist(){
         String name = JOptionPane.showInputDialog("What is your playlist name?: ");
+
+        if(name == null){
+            return;
+        }
         String type = findType();
 
         Playlist playlist = new Playlist(name, type);
@@ -366,7 +360,6 @@ public class LibraryPage extends JFrame implements FileObserver {
     }
 
     public String findType(){
-
         String[] responses = {"Image", "Audio", "Video"};
         String type = "";
 
@@ -421,12 +414,7 @@ public class LibraryPage extends JFrame implements FileObserver {
             MediaItem item = getMediaItemFromList(itemInfo);
 
             library = new MediaLibrary();
-
-            try {
-                library.addItemPlaylist(libraryPath, name, type, item);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            library.addItemPlaylist(libraryPath, name, type, item);
 
             loadData();
         }
@@ -521,6 +509,10 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         int response = fileChooser.showOpenDialog(null);
 
+        if(response == JFileChooser.CANCEL_OPTION){
+            return;
+        }
+
         if(response == JFileChooser.APPROVE_OPTION){
             File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
             dirPath = file.getAbsolutePath().replace("\\", "/");
@@ -537,16 +529,16 @@ public class LibraryPage extends JFrame implements FileObserver {
         String[] nameAndFormat = info.split(",");
         String name = nameAndFormat[0];
         String format = nameAndFormat[2].trim();
-        return library.checkNameFormat(library, name, format);
+        return library.findItem(library, name, format);
     }
 
-    public void openItem() {
+    public void openItem(JList list, DefaultListModel<String> model){
         fm = new FileManager();
 
-        int selectedIndex = mediaItemsList.getSelectedIndex();
+        int selectedIndex = list.getSelectedIndex();
 
         if(selectedIndex != -1){
-            String itemInfo = mediaItemsModel.getElementAt(selectedIndex);
+            String itemInfo = model.getElementAt(selectedIndex);
 
             MediaItem item = getMediaItemFromList(itemInfo);
 
@@ -563,41 +555,11 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
         else{
             JOptionPane.showMessageDialog(null,
-                    "No media item selected",
+                    "No item selected",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    public void openPlaylistItem() {
-        fm = new FileManager();
-
-        int selectedIndex = playlistItemsList.getSelectedIndex();
-
-        if(selectedIndex != -1){
-            String itemInfo = playlistItemsModel.getElementAt(selectedIndex);
-
-            MediaItem item = getMediaItemFromList(itemInfo);
-
-            if(!item.getUsability()){
-                JOptionPane.showMessageDialog(null,
-                        "File isn't usable as was manually created!",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            String path = item.getFileLocation();
-            fm.openMediaItem(path);
-        }
-        else{
-            JOptionPane.showMessageDialog(null,
-                    "No playlist item selected",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
 
 
     public void loadPlaylistItems() {
@@ -635,15 +597,6 @@ public class LibraryPage extends JFrame implements FileObserver {
         });
     }
 
-    public void loadMedia(){
-        library = new MediaLibrary();
-        library = library.getLibraryFromJson(libraryPath);
-
-        if(library.getMediaItems() != null){
-            updateMediaItems(getMediaItems());
-        }
-    }
-
     public void updateMediaItems(List<MediaItem> items){
         mediaItemsModel.clear();
         for(MediaItem item : items){
@@ -653,7 +606,6 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
 
     }
-
     public List<MediaItem> getMediaItems(){
         List<MediaItem> items;
 
@@ -662,8 +614,7 @@ public class LibraryPage extends JFrame implements FileObserver {
     }
 
     public void updatePlaylists(List<Playlist> playlists){
-//        playlistComboBoxModel.clear();
-        playlistsModel.removeAllElements();
+        playlistsModel.removeAllElements(); //Combo box works differently than scroll pane
             for(Playlist playlist : playlists){
                 playlistsModel.addElement(playlist.getPlaylistName()
                         + ", " + playlist.getPlaylistType());
@@ -677,7 +628,6 @@ public class LibraryPage extends JFrame implements FileObserver {
         playlists = library.getPlaylists();
         return playlists;
     }
-
 
     public void updatePlaylistItems(List<MediaItem> playlistItems){
         playlistItemsModel.clear();
@@ -730,8 +680,8 @@ public class LibraryPage extends JFrame implements FileObserver {
         openPlaylistItem = new JButton("Open playlist item");
     }
     public void addButtonListeners(){
-        openMediaItem.addActionListener(e -> openItem());
-        deleteMediaItem.addActionListener(e -> deleteitemList());
+        openMediaItem.addActionListener(e -> openItem(mediaItemsList, mediaItemsModel));
+        deleteMediaItem.addActionListener(e -> deleteItemList());
         searchMediaItem.addActionListener(e -> searchForItem());
         importFolder.addActionListener(e -> openFolder());
         folderWatch.addActionListener(e -> setFolder());
@@ -740,7 +690,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         deletePlaylist.addActionListener(e -> deletePlaylist());
         addPlaylistItem.addActionListener(e -> addItemPlaylistList());
         removePlaylistItem.addActionListener(e -> removePlaylistItemList());
-        openPlaylistItem.addActionListener(e -> openPlaylistItem());
+        openPlaylistItem.addActionListener(e -> openItem(playlistItemsList, playlistItemsModel));
     }
     public JPanel defineGetNameTab(){
         JPanel nameTypePanel = new JPanel();
@@ -909,7 +859,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         topPanel.setBackground(new Color(24, 240, 151));
         topPanel.setPreferredSize(new Dimension(100,100));
         topPanel.setLayout(new GridLayout(0,2));
-        topPanel.add(createitemPane);
+        topPanel.add(createItemPane);
         topPanel.add(title);
 
         return topPanel;

@@ -3,7 +3,6 @@ package FileManagement;
 import GUI.FileObserver;
 import MediaManagement.MediaLibrary;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.io.File;
@@ -24,37 +23,25 @@ public class FileManager implements Runnable{
 
     public FileManager(){
     }
-    // NEEDED? ^^^
     public synchronized void watchFolder() throws IOException { //Made synchronized just to make sure
 
         try {
             Path myDir = Paths.get(folderLocation);
-//            WatchService watcher = FileSystems.getDefault().newWatchService();
             WatchService watcher = myDir.getFileSystem().newWatchService();
 
             myDir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
             WatchKey key = watcher.take();
 
-            //Change to true and put key in loop if having problems
             while (key != null){
                 if(Thread.interrupted()){
                     break;
                 }
-
-
-//                try{
-//                    key = watcher.take();
-//                }
-//                catch (InterruptedException e){
-//                    break;
-//                }
 
                 List<WatchEvent<?>> events = key.pollEvents();
 
                     for (WatchEvent event : events) {
                         if (event.kind() == ENTRY_CREATE) {
                             Path createdFilePath = myDir.resolve((Path) event.context());
-                            SwingUtilities.invokeLater(() -> System.out.println("File processed"));
 
                             Search search = Search.getInstance();
                             search.typeVerify(createdFilePath.toString().replace("\\", "/"), libraryPath);
@@ -74,14 +61,11 @@ public class FileManager implements Runnable{
                             String name = dots[0];
                             String format = dots[dots.length - 1];
 
-                            SwingUtilities.invokeLater(() -> System.out.println("File deleted"));
-
                             MediaLibrary library = new MediaLibrary();
                             library.deleteMediaItem(libraryPath, name, format);
 
                             observer.onFileChanged(deletedFilePath);
                         }
-
                 }
 
                 boolean verified = key.reset();
@@ -90,11 +74,9 @@ public class FileManager implements Runnable{
                 }
             }
         }
-        catch (IOException | InterruptedException e){
-            System.out.println("Error watching file");
+        catch (InterruptedException e){
+            System.out.println("File watcher has been interrupted");
         }
-
-
     }
 
     public void openMediaItem(String fl){
@@ -115,10 +97,8 @@ public class FileManager implements Runnable{
         MediaLibrary library = new MediaLibrary(fl, name);
 
         library.writeLibraryToJson(library, fl);
-
-        System.out.println("ya did it!");
     }
-    public void deleteFile(String folderLocation, String fileName){  // put in different class
+    public void deleteFile(String folderLocation, String fileName){
         File dir = new File(folderLocation);
         File[] files = dir.listFiles();
         String path;
@@ -130,8 +110,6 @@ public class FileManager implements Runnable{
             }
         }
     }
-
-    // FILES DON'T GET DELTED WHEN LIBRARY IS DELTEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 
     /**
      * Creates a simple 'media file' for information

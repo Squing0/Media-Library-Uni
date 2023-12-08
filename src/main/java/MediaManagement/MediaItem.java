@@ -99,8 +99,8 @@ public class MediaItem {
      * @return formatted media item string.
      */
     public String printAllItemDetails(){
-        String s1 = "";
-        String use = "";
+        String s1;
+        String use;
 
         if(!usability){
             use = "NOT USABLE";
