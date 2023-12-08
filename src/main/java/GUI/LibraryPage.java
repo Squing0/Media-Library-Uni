@@ -669,28 +669,35 @@ public class LibraryPage extends JFrame implements FileObserver {
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
-        if(library != null){    // Deleting doesn't work if only one item present for items and playlists
-            if(!library.getMediaItems().isEmpty()){
+        if(library != null){    // Ensures that library has items to get
+            if(!library.getMediaItems().isEmpty()){ // Only updates if media items present
                 updateMediaItems(getMediaItems());
             }
 
-            playlistItemsModel.clear();
+            playlistItemsModel.clear(); // Playlist model different as based off playlist combo box so simply cleared.
 
-            if(!library.getPlaylists().isEmpty()){
+            if(!library.getPlaylists().isEmpty()){ // Only updates if playlists present
                 updatePlaylists(getPlaylists());
             }
         }
     }
-
+    /**
+     * Updates media items in UI
+     * @param items List of media items in library.
+     */
     public void updateMediaItems(List<MediaItem> items){
-        mediaItemsModel.clear();
-        for(MediaItem item : items){
+        mediaItemsModel.clear();    //Clears item model
+        for(MediaItem item : items){    //Loops through items and adds name, type and format with commas between.
             mediaItemsModel.addElement(item.getMediaName()
                     + ", " + item.getMediaType()
                     + ", " + item.getFormat());
         }
-
     }
+
+    /**
+     * Creates list of media items and gets from library.
+     * @return list of media items.
+     */
     public List<MediaItem> getMediaItems(){
         List<MediaItem> items;
 
@@ -698,15 +705,22 @@ public class LibraryPage extends JFrame implements FileObserver {
         return items;
     }
 
+    /**
+     * Updates playlists in UI.
+     * @param playlists List of playlists in library.
+     */
     public void updatePlaylists(List<Playlist> playlists){
-        playlistsModel.removeAllElements(); //Combo box works differently than scroll pane
-            for(Playlist playlist : playlists){
+        playlistsModel.removeAllElements(); //Combo box works differently than scroll pane so remove elements used here
+            for(Playlist playlist : playlists){ // Loops through playlists and adds name and type with commas between.
                 playlistsModel.addElement(playlist.getPlaylistName()
                         + ", " + playlist.getPlaylistType());
             }
-
     }
 
+    /**
+     * Creates list of playlists and gets from library.
+     * @return list of playlists.
+     */
     public List<Playlist> getPlaylists(){
         List<Playlist> playlists;
 
