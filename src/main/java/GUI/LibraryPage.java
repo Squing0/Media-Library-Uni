@@ -258,7 +258,7 @@ public class LibraryPage extends JFrame implements FileObserver {
     }
 
     /**
-     * If user chooses not to save, then original is repalced with clone.
+     * If user chooses not to save, then original is replaced with clone.
      */
     public void notSaveChoice(){
         unchangedFile.delete();
@@ -296,7 +296,7 @@ public class LibraryPage extends JFrame implements FileObserver {
                 resolutionEnter.setEnabled(true);   // Images can't select duration
                 formatEnter.removeAllItems();
 
-                for (String iType : imageFormats) { // Adds foramts depending on type
+                for (String iType : imageFormats) { // Adds formats depending on type
                     formatEnter.addItem(iType);
                 }
             }
