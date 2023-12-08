@@ -8,7 +8,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Main page of GUI to manage media libraries.
+ * @author Lyle Patterson
+ */
 public class MainPage extends JFrame {
+    /** ref to file manager class. */
     private FileManager fm;
     private JScrollPane libraries;
     private JList mediaLibraryItems;
@@ -16,8 +21,12 @@ public class MainPage extends JFrame {
     private JButton createLib;
     private JButton deleteLib;
     private JButton openLib;
+    /** Defines media libraries folder location to be reused*/
     private String librariesLocation = "Media-Libraries";
 
+    /**
+     * Main page constructor called when page is initialised.
+     */
     public MainPage(){
         // Defining JFrame
         this.setTitle("Media Library Organiser");
@@ -42,7 +51,7 @@ public class MainPage extends JFrame {
         JPanel rightPanel = new JPanel();
         JPanel leftPanel = new JPanel();
 
-        // Adding panels
+        // Adding panels to sections of border layout
         this.add(defineGetTopPanel(), BorderLayout.NORTH);
         this.add(defineGetBottomPanel(), BorderLayout.SOUTH);
         this.add(rightPanel, BorderLayout.EAST);
@@ -56,18 +65,38 @@ public class MainPage extends JFrame {
         // Loading media library items
         loadData();
     }
+
+    /**
+     * Main entry point of app.
+     * @param args unused string array of command line arguments.
+     */
     public static void main(String[] args) {
+        //Invoke later used so that frame is opened on event dispatch thread.
         SwingUtilities.invokeLater(MainPage::new);
     }
+
+    /**
+     * Loads data into media library scroll pane.
+     */
     public void loadData(){
         updateLibraryItems(getLibraries());
     }
+
+    /**
+     * Updates library items by clearing model and adding items one by one.
+     * @param libraryItems List of media library items.
+     */
     public void updateLibraryItems(List <String> libraryItems){
         mediaLibraryModel.clear();
         for(String library : libraryItems){
             mediaLibraryModel.addElement(library);
         }
     }
+
+    /**
+     * Gets media libraries from media library folder
+     * @return list of library names.
+     */
     public List<String> getLibraries(){
         List<String> libraryNames = new ArrayList<>();
         String filePath;
@@ -75,29 +104,33 @@ public class MainPage extends JFrame {
         File dir = new File(librariesLocation);
         File[] files = dir.listFiles();
 
-        for (File file : files){
+        for (File file : files){    // Loops through files in media libraries folder.
             filePath = file.getAbsolutePath().replace("\\", "/");
             String[] slashes = filePath.split("/");
             String nameAndFormat = slashes[slashes.length - 1];
 
-            libraryNames.add(nameAndFormat);
+            libraryNames.add(nameAndFormat);    //Adds library name and format individually
 
         }
         return libraryNames;
     }
+
+    /**
+     * Adds media library to library list.
+     */
     public void addLibraryToList(){
         String name = JOptionPane.showInputDialog(null, "Enter new media library name:");
 
         if(name == null){   // Purely used to handle if the user exits input dialog.
         }
-        else if(!name.isEmpty()){
-            if(!checkLibraryPresent(name)){
+        else if(!name.isEmpty()){   // User isn't allowed to enter blank text
+            if(!checkLibraryPresent(name)){ //Same library can't be entered
                 String path = "Media-Libraries/" + name + ".json";
 
                 fm = new FileManager();
-                fm.createLibraryFile(path, name);
+                fm.createLibraryFile(path, name);   //Literal file is created
 
-                mediaLibraryModel.addElement(name + ".json");
+                mediaLibraryModel.addElement(name + ".json");   // library item added to list.
 
                 JOptionPane.showMessageDialog(null,
                         "Created: " + name,
@@ -118,34 +151,44 @@ public class MainPage extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * Checks if media library is already present in list.
+     * @param name Name of media library to check.
+     * @return true if library is present and false if not.
+     */
     public boolean checkLibraryPresent(String name){
         String fullName = name + ".json";
 
         File dir = new File(librariesLocation);
         File[] files = dir.listFiles();
 
-        for(File file: files){
+        for(File file: files){  //Loops through library folder against name entered.
             if (file.getAbsolutePath().replace("\\", "/").endsWith(fullName)){
                 return true;
             }
         }
         return false;
     }
-    private void openSpecificLibrary() {
-        int selectedIndex = mediaLibraryItems.getSelectedIndex();
 
-        if(selectedIndex != -1){
-            String specificLibrary = mediaLibraryModel.getElementAt(selectedIndex);
+    /**
+     * Opens library page of library selected.
+     */
+    private void openSpecificLibrary() {
+        int selectedIndex = mediaLibraryItems.getSelectedIndex();   //Index is first gotten so element can be gotten
+
+        if(selectedIndex != -1){    //Index is checked to see if user has not selected a library.
+            String specificLibrary = mediaLibraryModel.getElementAt(selectedIndex); // Element gotten
             String path = "Media-Libraries/" + specificLibrary;
 
-            SwingUtilities.invokeLater(() -> new LibraryPage(path));
+            SwingUtilities.invokeLater(() -> new LibraryPage(path));    // Invoke later used so new frame opened on EDT.
 
             JOptionPane.showMessageDialog(null,
                     "Opened: " + specificLibrary,
                     "Item opened",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            this.dispose();
+            this.dispose(); // Main page not shown when library page is opened.
         }
         else{
             JOptionPane.showMessageDialog(null,
@@ -154,15 +197,19 @@ public class MainPage extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * Deletes library chosen.
+     */
     public void deleteLibrary() {
         int selectedIndex = mediaLibraryItems.getSelectedIndex();
 
-        if(selectedIndex != -1){
+        if(selectedIndex != -1){ //Index is checked to see if user has not selected a library.
             String specificLibrary = mediaLibraryModel.getElementAt(selectedIndex);
-            mediaLibraryModel.remove(selectedIndex);
+            mediaLibraryModel.remove(selectedIndex);    // Library removed from list in UI.
 
             fm = new FileManager();
-            fm.deleteFile(librariesLocation, specificLibrary);
+            fm.deleteFile(librariesLocation, specificLibrary);  // Literal file deleted.
 
             JOptionPane.showMessageDialog(null,
                     "Deleted: " + specificLibrary,
@@ -176,17 +223,29 @@ public class MainPage extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * Defines model for scroll pane.
+     */
     public void defineLibraryModel(){
         mediaLibraryModel = new DefaultListModel<>();
         mediaLibraryItems = new JList<>(mediaLibraryModel);
     }
 
+    /**
+     * Defines title of frame
+     * @return title.
+     */
     public JLabel defineGetTitle(){
         JLabel title = new JLabel("Media Library Organiser");
         title.setFont(new Font("Helvetica", Font.BOLD, 40));
         title.setForeground(Color.BLACK);
         return title;
     }
+
+    /**
+     * Defines scroll pane using library model.
+     */
     public void defineLibraryPane(){
         JLabel columnHeader = new JLabel("Media Libraries");
 
@@ -194,13 +253,21 @@ public class MainPage extends JFrame {
         libraries.setColumnHeaderView(columnHeader);
         libraries.setPreferredSize(new Dimension(400, 300));
     }
+
+    /**
+     * Defines and retrieves center panel.
+     * @return center panel.
+     */
     public JPanel defineGetCenterPane(){
         JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new FlowLayout());
-
         centerPanel.add(libraries);
+
         return centerPanel;
     }
+
+    /**
+     * Defines buttons in bottom panel and adds action listeners for them.
+     */
     public void defineButtons(){
         createLib = new JButton("Create Library");
         deleteLib = new JButton("Delete Library");
@@ -210,17 +277,27 @@ public class MainPage extends JFrame {
         createLib.addActionListener(e -> addLibraryToList());
         openLib.addActionListener(e -> openSpecificLibrary());
     }
+
+    /**
+     * Defines and retrieves bottom panel
+     * @return bottom panel.
+     */
     public JPanel defineGetBottomPanel(){
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(new Color(24, 240, 151));
         bottomPanel.setPreferredSize(new Dimension(80,80));
-        bottomPanel.setLayout(new GridLayout(0,3,10,0));
+        bottomPanel.setLayout(new GridLayout(0,3,10,0));   //3 columns for each button
         bottomPanel.add(openLib);
         bottomPanel.add(createLib);
         bottomPanel.add(deleteLib);
 
         return bottomPanel;
     }
+
+    /**
+     * Defines and retrieves top panel.
+     * @return top panel.
+     */
     public JPanel defineGetTopPanel(){
         JPanel topPanel = new JPanel();
         topPanel.setBackground(new Color(24, 240, 151));

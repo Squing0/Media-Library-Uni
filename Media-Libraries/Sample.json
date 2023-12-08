@@ -1,0 +1,64 @@
+{
+  "libraryName" : "Sample",
+  "location" : "Media-Libraries/Sample.json",
+  "mediaItems" : [ {
+    "mediaName" : "Fall",
+    "mediaType" : "Image",
+    "format" : "jpeg",
+    "size" : 2.0,
+    "fileLocation" : "Created-Files/Fall.jpeg",
+    "trackLength" : 0.0,
+    "resolution" : "480x360",
+    "usability" : false
+  }, {
+    "mediaName" : "Summer",
+    "mediaType" : "Image",
+    "format" : "gif",
+    "size" : 4.0,
+    "fileLocation" : "Created-Files/Summer.gif",
+    "trackLength" : 0.0,
+    "resolution" : "640x480",
+    "usability" : false
+  }, {
+    "mediaName" : "Hit",
+    "mediaType" : "Audio",
+    "format" : "mp3",
+    "size" : 4.0,
+    "fileLocation" : "Created-Files/Hit.mp3",
+    "trackLength" : 12.0,
+    "resolution" : null,
+    "usability" : false
+  }, {
+    "mediaName" : "Show",
+    "mediaType" : "Video",
+    "format" : "mov",
+    "size" : 4.0,
+    "fileLocation" : "Created-Files/Show.mov",
+    "trackLength" : 12.0,
+    "resolution" : "1920x1080",
+    "usability" : false
+  } ],
+  "playlists" : [ {
+    "playlistName" : "Seasons",
+    "playlistType" : "Image",
+    "mediaItems" : [ {
+      "mediaName" : "Fall",
+      "mediaType" : "Image",
+      "format" : "jpeg",
+      "size" : 2.0,
+      "fileLocation" : "Created-Files/Fall.jpeg",
+      "trackLength" : 0.0,
+      "resolution" : "480x360",
+      "usability" : false
+    }, {
+      "mediaName" : "Summer",
+      "mediaType" : "Image",
+      "format" : "gif",
+      "size" : 4.0,
+      "fileLocation" : "Created-Files/Summer.gif",
+      "trackLength" : 0.0,
+      "resolution" : "640x480",
+      "usability" : false
+    } ]
+  } ]
+}

@@ -14,14 +14,24 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+/**
+ * Library page for specific media library.
+ * @author Lyle Patterson
+ */
 public class LibraryPage extends JFrame implements FileObserver {
+    /** Library object */
     private MediaLibrary library;
+    /** File manager object */
     private FileManager fm;
+    /** Thread for folder to be watched */
     private Thread folderThread;
+    /** Unchanged json file */
     private File unchangedFile;
+    /** Cloned json file */
     private File clonedFile;
-    private JButton backToMain;
+    /** Specific path to library. */
     private String libraryPath;
+    private JButton backToMain;
     private JButton importFolder;
     private JButton folderWatch;
     private JButton deleteMediaItem;
@@ -53,8 +63,12 @@ public class LibraryPage extends JFrame implements FileObserver {
     private JTextField sizeEnter;
     JLabel title;
 
+    /**
+     * Library page constructor called when frame is initialised.
+     * @param lp Location of library file.
+     */
     public LibraryPage(String lp){
-        this.libraryPath = lp;
+        this.libraryPath = lp;  // location set
 
         // Top panel label
         title = new JLabel("Library: " + libraryPath);
@@ -78,7 +92,7 @@ public class LibraryPage extends JFrame implements FileObserver {
         definePlaylistPane();
         definePlaylistItemsPane();
 
-        // Adding all main panels to frame and setting layout
+        // Adding all main panels to frame and setting border layout
         this.setLayout(new BorderLayout());
 
         this.add(defineGetTopPanel(), BorderLayout.NORTH);
@@ -97,9 +111,9 @@ public class LibraryPage extends JFrame implements FileObserver {
         this.setVisible(true);
 
         // Setting up threading.
-        fm = new FileManager(this::onFileChanged);
+        fm = new FileManager(this::onFileChanged);  //File observer interface used to interact with file manager
         folderThread = new Thread(fm);
-        folderThread.start();
+        folderThread.start();   // Thread started when frame initialised.
 
         // Loading library data to UI.
         loadData();
@@ -112,13 +126,16 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
+    /**
+     * Searches for media item in media item list.
+     */
     public void searchForItem() {
         String name = JOptionPane.showInputDialog("Enter name to search");
         String type = findType();
 
         library = library.getLibraryFromJson(libraryPath);
         Search search = Search.getInstance();
-        MediaItem item = search.searchForItem(library, name, type);
+        MediaItem item = search.searchForItem(library, name, type); //Searches using a name and type
 
         if(item != null){
             JOptionPane.showMessageDialog(this, item.printAllItemDetails());
@@ -127,20 +144,20 @@ public class LibraryPage extends JFrame implements FileObserver {
                     "Open?",
                     JOptionPane.YES_NO_OPTION);
 
-            if(choice == JOptionPane.YES_OPTION){
+            if(choice == JOptionPane.YES_OPTION){   //User can't open manually created file
                 if(!item.getUsability()){
                     JOptionPane.showMessageDialog(null,
                             "File isn't usable as was manually created!",
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
-                    return;
+                    return; //ends method
                 }
 
                 String path = item.getFileLocation();
-                fm.openMediaItem(path);
+                fm.openMediaItem(path); //opens file if usable
             }
         }
-        else{
+        else{   //Checks if item is null
             JOptionPane.showMessageDialog(null,
                     "File name with that type does not exist!",
                     "Error",
