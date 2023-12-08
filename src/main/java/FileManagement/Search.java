@@ -68,7 +68,7 @@ public class Search {
         MediaLibrary library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryFl);
 
-        if(library.mediaItemAlreadyPresent(library, name, format)) {    //Checks if item is already present before adding.
+        if(!library.mediaItemAlreadyPresent(library, name, format)) {    //Checks if item is already present before adding.
             switch (formatCorrect) {    // Uses specific constructor depending on item and adds to library.
                 case "Image" -> {
                     type = "Image";

@@ -165,13 +165,17 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
+    /**
+     * Shows item details when item is double-clicked.
+     * @param e Mouse event
+     */
     public void mouseDetails(MouseEvent e){
         JList<String> list = (JList<String>) e.getSource();
 
-        int selectedIndex = list.getSelectedIndex();
+        int selectedIndex = list.getSelectedIndex();    //index allows element to be gotten
         String selectedItem = list.getModel().getElementAt(selectedIndex);
 
-        MediaItem item = getMediaItemFromList(selectedItem);
+        MediaItem item = getMediaItemFromList(selectedItem);    //Item is gotten and details are printed with item method
         String details = item.printAllItemDetails();
 
         JOptionPane.showMessageDialog(null,
@@ -179,87 +183,126 @@ public class LibraryPage extends JFrame implements FileObserver {
                 "Success!",
                 JOptionPane.INFORMATION_MESSAGE);
     }
+
+    /**
+     * Folder is set to be watched
+     */
     public void setFolder() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fileChooser.setCurrentDirectory(new File("."));
+        fileChooser.setCurrentDirectory(new File(".")); // Only directories can be selected. Chooser opens at media library directory.
 
         int response = fileChooser.showOpenDialog(null);
 
         if(response == JFileChooser.CANCEL_OPTION){
-            return;
+            return; // For if user cancels
         }
 
         String path;
-        fm = new FileManager(this::onFileChanged);
+        fm = new FileManager(this::onFileChanged);  //File observer interface used to interact with file manager.
 
         if(response == JFileChooser.APPROVE_OPTION){
            path = fileChooser.getSelectedFile().getAbsolutePath().replace("\\", "/");
 
-           fm.setFolderLocation(path);
+           fm.setFolderLocation(path); //Sets path of folder to be watched
            fm.setLibraryPath(libraryPath);
 
-           if(folderThread != null){    // Ensures thread is active
-               folderThread.interrupt();  // Signals to file manager
+           if(folderThread != null){    // Ensures thread is active.
+               folderThread.interrupt();  // Signals to file manager that folder has been changed.
 
                try{
-                   folderThread.join(); // Waits for thread to fully finish
+                   folderThread.join(); // Waits for thread to fully finish.
                }
                catch (InterruptedException e){
                   System.out.println("Interruption in thread!");
                }
            }
 
-            folderThread = new Thread(fm);
+            folderThread = new Thread(fm);  // New thread is started with new folder path.
             folderThread.start();
         }
     }
 
+    /**
+     * Creates clone file when class is initialised
+     * that that holds state of page when created
+     * @throws IOException if there is an error handling the file.
+     */
     public void setUpFiles() throws IOException {
         String[] fullPath = libraryPath.split("/");
         String[] nameAndFormat = fullPath[1].split("\\.");
         String name = nameAndFormat[0];
         String format = nameAndFormat[1];
 
-        unchangedFile = new File(libraryPath);
+        unchangedFile = new File(libraryPath);  //Defines original file.
 
         String libraryName = name + "json";
-        clonedFile = new File(libraryName);
+        clonedFile = new File(libraryName); // Defines clone file.
 
-        String finalName = name + "C." + format; // Can't add dot alone for some reason
-        clonedFile = new File("Media-Libraries/", finalName);
+        String finalName = name + "C." + format; // Adds a C for copy when the copy is used
+        clonedFile = new File("Media-Libraries/", finalName);   // Copy is added to media libraries directory.
 
         try {
-            Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(unchangedFile.toPath(), clonedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);   //Cloned file copies contents of original
         }
         catch (IOException e){
             System.out.println("Error handling file.");
         }
     }
 
+    /**
+     * If user chooses to save, then clone is deleted.
+     */
     public void saveChoice(){
         clonedFile.delete();
     }
 
+    /**
+     * If user chooses not to save, then original is repalced with clone.
+     */
     public void notSaveChoice(){
         unchangedFile.delete();
     }
+
+    /**
+     * Asks user if they want to save or not while exiting frame.
+     */
+    public void goBack(){
+        int choice = JOptionPane.showConfirmDialog(this,
+                "Save changes?",
+                "Options:",
+                JOptionPane.YES_NO_OPTION);
+
+        if(choice == JOptionPane.YES_OPTION){
+            saveChoice();   // Saves changes
+        }
+        else {
+            notSaveChoice();    // Doesn't save changes
+        }
+
+        SwingUtilities.invokeLater(MainPage::new);  //Invoke later used to instantiate frame on EDT.
+        dispose();
+    }
+
+    /**
+     * Checks item type selected in tabs and changes formats given accordingly.
+     */
     public void checkItemType() {
        String type = (String) typeEnter.getSelectedItem();
 
         switch (type) {
             case "Image" -> {
                 durationEnter.setEditable(false);
-                resolutionEnter.setEnabled(true);
+                resolutionEnter.setEnabled(true);   // Images can't select duration
                 formatEnter.removeAllItems();
 
-                for (String iType : imageFormats) {
+                for (String iType : imageFormats) { // Adds foramts depending on type
                     formatEnter.addItem(iType);
                 }
             }
             case "Audio" -> {
                 durationEnter.setEditable(true);
-                resolutionEnter.setEnabled(false);
+                resolutionEnter.setEnabled(false);  // Audio can't select resolution.
                 formatEnter.removeAllItems();
 
                 for (String aType : audioFormats) {
@@ -278,9 +321,13 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
+    /**
+     * Creates media item based on info entered in tabs.
+     */
     public void submitItem(){
-        if(checkMediaItemEntered()){
+        if(checkMediaItemEntered()){    // Checks if item details have all been entered.
 
+            //Gets each item variable
             String name = nameEnter.getText();
             String type = (String) typeEnter.getSelectedItem();
             String format = (String) formatEnter.getSelectedItem();
@@ -293,6 +340,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 
             MediaItem item = new MediaItem();   // Not sure if it will work as also initialised below
 
+            //Different constructor used depending on item type
             if(type.equals("Video")){
                 resolution = (String) resolutionEnter.getSelectedItem();
                 trackLength = Double.parseDouble(durationEnter.getText());
@@ -308,11 +356,11 @@ public class LibraryPage extends JFrame implements FileObserver {
             }
 
             library = new MediaLibrary();
-            library.addMedia(libraryPath, item);
+            library.addMedia(libraryPath, item);    // Item added to library
 
-            fm.createMediaFile(fl);
+            fm.createMediaFile(fl); //Literal file created.
 
-            loadData();
+            loadData(); // Main UI updated.
 
             JOptionPane.showMessageDialog(null,
                     "Process finished",
@@ -328,18 +376,22 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
+    /**
+     * Deletes item from media library list and library
+     */
     public void deleteItemList() {
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
-        int selectedIndex = mediaItemsList.getSelectedIndex();
+        int selectedIndex = mediaItemsList.getSelectedIndex();  // index used to get element.
 
-        if(selectedIndex != -1){
+        if(selectedIndex != -1){    // Have to be selecting item.
             String itemInfo = mediaItemsModel.getElementAt(selectedIndex);
             MediaItem item = getMediaItemFromList(itemInfo);
 
-            library.deleteMediaItem(libraryPath, item.getMediaName(), item.getFormat());
+            library.deleteMediaItem(libraryPath, item.getMediaName(), item.getFormat());    //item deleted with name and format
 
+            //If the file was manually created, delete the file associated with it.
             if(!item.getUsability()){
                 fm = new FileManager();
                 fm.deleteFile("Created-Files",
@@ -351,7 +403,7 @@ public class LibraryPage extends JFrame implements FileObserver {
                     "Success!",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            loadData();
+            loadData(); // Update main UI
         }
         else{
             JOptionPane.showMessageDialog(null,
@@ -360,10 +412,13 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
+    /**
+     * Create playlist object and add to UI and library
+     */
     public void createPlaylist(){
         String name = JOptionPane.showInputDialog("What is your playlist name?: ");
 
-        if(name == null){
+        if(name == null){   // If user wants to exit.
             return;
         }
         String type = findType();
@@ -373,11 +428,15 @@ public class LibraryPage extends JFrame implements FileObserver {
         library = new MediaLibrary();
         library.addPlaylist(libraryPath, playlist);
 
-        loadData();
+        loadData(); // Update main ui
     }
 
+    /**
+     * Allows user to choose media type.
+     * @return type chosen.
+     */
     public String findType(){
-        String[] responses = {"Image", "Audio", "Video"};
+        String[] responses = {"Image", "Audio", "Video"};   // Array of 3 created for yes, no, cancel dialog.
         String type = "";
 
         int index = JOptionPane.showOptionDialog(null,
@@ -401,39 +460,45 @@ public class LibraryPage extends JFrame implements FileObserver {
         return type;
     }
 
+    /**
+     * Deletes playlist from library and UI.
+     */
     public void deletePlaylist(){
         String specificPlaylist = (String) playlists.getSelectedItem();
         String[] nameAndType = specificPlaylist.split(",");
         String name = nameAndType[0];
-        String type = nameAndType[1].trim();
+        String type = nameAndType[1].trim();    //Splits library with comma to get name and type
 
         library = new MediaLibrary();
-        library.deletePlaylist(libraryPath, name, type);
+        library.deletePlaylist(libraryPath, name, type);    // Deletes playlist from library
 
         JOptionPane.showMessageDialog(null,
                 name + " deleted!",
                 "Success!",
                 JOptionPane.INFORMATION_MESSAGE);
 
-        loadData();
+        loadData(); // Update UI
     }
 
+    /**
+     * Adds item to playlist in library and UI
+     */
     public void addItemPlaylistList(){
         String specificPlaylist = (String) playlists.getSelectedItem();
         String[] nameAndType = specificPlaylist.split(",");
         String name = nameAndType[0];
-        String type = nameAndType[1].trim();
+        String type = nameAndType[1].trim(); //Splits library with comma to get name and type
 
-        int selectedIndex = mediaItemsList.getSelectedIndex();
+        int selectedIndex = mediaItemsList.getSelectedIndex();  // index allows element to be gotten
 
-        if(selectedIndex != -1){
+        if(selectedIndex != -1){    // User has to be selecting item
             String itemInfo = mediaItemsModel.getElementAt(selectedIndex);
             MediaItem item = getMediaItemFromList(itemInfo);
 
             library = new MediaLibrary();
-            library.addItemPlaylist(libraryPath, name, type, item);
+            library.addItemPlaylist(libraryPath, name, type, item); // Adds item to playlist with name and type
 
-            loadData();
+            loadData(); // Update main UI
         }
         else{
             JOptionPane.showMessageDialog(null,
@@ -443,6 +508,9 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
+    /**
+     * Removes playlist item from library and UI
+     */
     public void removePlaylistItemList() {
         int selectedIndex = playlistItemsList.getSelectedIndex();
 
@@ -450,19 +518,19 @@ public class LibraryPage extends JFrame implements FileObserver {
             String itemInfo = playlistItemsModel.getElementAt(selectedIndex);
             String nameAndFormat[] = itemInfo.split(",");
             String itemName = nameAndFormat[0];
-            String itemFormat = nameAndFormat[2].trim();
+            String itemFormat = nameAndFormat[2].trim();    // Gets playlist item name and format
 
 
             String specificPlaylist = (String) playlists.getSelectedItem();
             String nameAndType[] = specificPlaylist.split(",");
             String playlistName = nameAndType[0];
-            String playlistType = nameAndType[1].trim();
+            String playlistType = nameAndType[1].trim();    // Gets playlist name and format
 
 
             library = new MediaLibrary();
-            library.deleteItemPlaylist(libraryPath, playlistName, playlistType, itemName, itemFormat);
+            library.deleteItemPlaylist(libraryPath, playlistName, playlistType, itemName, itemFormat);  // Deletes item from library
 
-            loadData();
+            loadData(); // Update main UI
         }
         else{
             JOptionPane.showMessageDialog(null,
@@ -472,46 +540,40 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
+    /**
+     * Checks if a media item has been fully entered
+     * @return true if item details fully entered and false if not.
+     */
     public boolean checkMediaItemEntered(){
-        boolean nameNotEntered = nameEnter.getText().isEmpty();
+        boolean nameNotEntered = nameEnter.getText().isEmpty(); // Makes sure user not entered null.
         boolean sizeNotEntered = sizeEnter.getText().isEmpty();
 
         String type = (String) typeEnter.getSelectedItem(); //Needed to check that 3 text areas were entered
 
-        for(char c : sizeEnter.getText().toCharArray()){
+        for(char c : sizeEnter.getText().toCharArray()){    //Make sure that size is numeric
             if(Character.isAlphabetic(c)){
                 return false;
             }
         }
 
-        if(type.equals("Image")){
+        if(type.equals("Image")){   // If image entered then duration doesn't need to be checked.
             return !nameNotEntered && !sizeNotEntered;
         }
         else{
         boolean durationNotEntered = durationEnter.getText().isEmpty();
 
-            for(char c :  durationEnter.getText().toCharArray()){
+            for(char c :  durationEnter.getText().toCharArray()){   // Making sure that duration isn't null and is numeric
                 if(Character.isAlphabetic(c)){
                     return false;
                 }
             }
             return !nameNotEntered && !sizeNotEntered && !durationNotEntered;
         }
-
-//        boolean nameNotEntered = nameEnter.getText().isEmpty();
-//        boolean sizeNotEntered = sizeEnter.getText().isEmpty();
-//
-//        String type = (String) typeEnter.getSelectedItem();
-//
-//        if ("Image".equals(type)) {
-//            return !(nameNotEntered || sizeNotEntered);
-//        } else {
-//            boolean durationNotEntered = durationEnter.getText().isEmpty();
-//            return !(nameNotEntered || sizeNotEntered || durationNotEntered);
-//        }
-
     }
 
+    /**
+     * Opens and imports all files within folder
+     */
     public void openFolder() {
         Search search = Search.getInstance();
 
@@ -522,33 +584,44 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fileChooser.setCurrentDirectory(new File("."));
+        fileChooser.setCurrentDirectory(new File(".")); //Allows user to choose folder, opens in media library app directory
 
         int response = fileChooser.showOpenDialog(null);
 
-        if(response == JFileChooser.CANCEL_OPTION){
+        if(response == JFileChooser.CANCEL_OPTION){ // If user cancels then end
             return;
         }
 
-        if(response == JFileChooser.APPROVE_OPTION){
+        if(response == JFileChooser.APPROVE_OPTION){    // If user chooses folder then get path of directory.
             File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
             dirPath = file.getAbsolutePath().replace("\\", "/");
         }
 
-        search.searchDirectory(dirPath, libraryPath);
-        loadData();
+        search.searchDirectory(dirPath, libraryPath);   // Search through directory and import any media files.
+        loadData(); // Update main UI.
     }
 
+    /**
+     * Gets specific media item from list.
+     * @param info media item information.
+     * @return media item found.
+     */
     public MediaItem getMediaItemFromList(String info){
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
 
         String[] nameAndFormat = info.split(",");
         String name = nameAndFormat[0];
-        String format = nameAndFormat[2].trim();
-        return library.findItem(library, name, format);
+        String format = nameAndFormat[2].trim();    // Name and format found
+
+        return library.findItem(library, name, format); // Item returned.
     }
 
+    /**
+     * Opens a media item.
+     * @param list List of media items or playlist items
+     * @param model model that uses either media items or playlist items.
+     */
     public void openItem(JList list, DefaultListModel<String> model){
         fm = new FileManager();
 
@@ -559,7 +632,7 @@ public class LibraryPage extends JFrame implements FileObserver {
 
             MediaItem item = getMediaItemFromList(itemInfo);
 
-            if(!item.getUsability()){
+            if(!item.getUsability()){   // If the item was manually created, then end method.
                 JOptionPane.showMessageDialog(null,
                         "File isn't usable as was manually created!",
                         "Error",
@@ -568,7 +641,7 @@ public class LibraryPage extends JFrame implements FileObserver {
             }
 
             String path = item.getFileLocation();
-            fm.openMediaItem(path);
+            fm.openMediaItem(path); //Opens item in file explorer with path from item.
         }
         else{
             JOptionPane.showMessageDialog(null,
@@ -578,19 +651,20 @@ public class LibraryPage extends JFrame implements FileObserver {
         }
     }
 
-
-    public void loadPlaylistItems() {
-        String specificPlaylist = (String) playlists.getSelectedItem();
-
-        if(specificPlaylist != null){
-            String[] nameAndType = specificPlaylist.split(",");
-            String name = nameAndType[0];
-            String type = nameAndType[1].trim();
-
-            updatePlaylistItems(getPlaylistItems(name, type));
-        }
+    /**
+     * Method from file observer interface
+     * @param fl File location of file from folder being watched.
+     */
+    public void onFileChanged(Path fl){
+        SwingUtilities.invokeLater(() -> {
+            loadData(); // Invoke later used as involved in concurrent operation.
+        });
     }
 
+    /**
+     * Updates UI for items, playlists and playlist items
+     * when the frame is initialised and anytime a change is made.
+     */
     public void loadData(){
         library = new MediaLibrary();
         library = library.getLibraryFromJson(libraryPath);
@@ -606,12 +680,6 @@ public class LibraryPage extends JFrame implements FileObserver {
                 updatePlaylists(getPlaylists());
             }
         }
-    }
-
-    public void onFileChanged(Path fl){
-        SwingUtilities.invokeLater(() -> {
-            loadData();
-        });
     }
 
     public void updateMediaItems(List<MediaItem> items){
@@ -666,22 +734,19 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         return playlistItems;
     }
-    public void goBack(){
-        int choice = JOptionPane.showConfirmDialog(this,
-                "Save changes?",
-                        "Options:",
-                JOptionPane.YES_NO_OPTION);
+    /**
+     * Loads playlist items into playlist items list depending on playlist selected.
+     */
+    public void loadPlaylistItems() {
+        String specificPlaylist = (String) playlists.getSelectedItem();
 
-        if(choice == JOptionPane.YES_OPTION){
-            saveChoice();
-        }
-        else {
-            notSaveChoice();
-        }
+        if(specificPlaylist != null){
+            String[] nameAndType = specificPlaylist.split(",");
+            String name = nameAndType[0];
+            String type = nameAndType[1].trim();    // Comma used to get info
 
-        // Look for right place to use invoke later
-        SwingUtilities.invokeLater(MainPage::new);
-        dispose();
+            updatePlaylistItems(getPlaylistItems(name, type));
+        }
     }
     public void defineButtons(){
         openMediaItem = new JButton("Open media item");
