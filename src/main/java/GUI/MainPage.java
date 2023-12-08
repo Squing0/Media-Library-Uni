@@ -76,7 +76,7 @@ public class MainPage extends JFrame {
     }
 
     /**
-     * Loads data into media library scroll pane.
+     * Loads data into media library scroll pane..
      */
     public void loadData(){
         updateLibraryItems(getLibraries());
