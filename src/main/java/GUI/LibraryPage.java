@@ -772,6 +772,10 @@ public class LibraryPage extends JFrame implements FileObserver {
             updatePlaylistItems(getPlaylistItems(name, type));  // Items updated with specific name and type of playlist.
         }
     }
+
+    /**
+     * Defines buttons used.
+     */
     public void defineButtons(){
         openMediaItem = new JButton("Open media item");
         deleteMediaItem = new JButton("Delete media item");
@@ -785,8 +789,12 @@ public class LibraryPage extends JFrame implements FileObserver {
         removePlaylistItem = new JButton("Remove item from playlist");
         openPlaylistItem = new JButton("Open playlist item");
     }
+
+    /**
+     * Adds action listeners to buttons.
+     */
     public void addButtonListeners(){
-        openMediaItem.addActionListener(e -> openItem(mediaItemsList, mediaItemsModel));
+        openMediaItem.addActionListener(e -> openItem(mediaItemsList, mediaItemsModel)); // Used for media items specifically
         deleteMediaItem.addActionListener(e -> deleteItemList());
         searchMediaItem.addActionListener(e -> searchForItem());
         importFolder.addActionListener(e -> openFolder());
@@ -796,8 +804,13 @@ public class LibraryPage extends JFrame implements FileObserver {
         deletePlaylist.addActionListener(e -> deletePlaylist());
         addPlaylistItem.addActionListener(e -> addItemPlaylistList());
         removePlaylistItem.addActionListener(e -> removePlaylistItemList());
-        openPlaylistItem.addActionListener(e -> openItem(playlistItemsList, playlistItemsModel));
+        openPlaylistItem.addActionListener(e -> openItem(playlistItemsList, playlistItemsModel)); // Used for playlist items specifically
     }
+
+    /**
+     * Defines first tab to get name and format
+     * @return Name tab panel.
+     */
     public JPanel defineGetNameTab(){
         JPanel nameTypePanel = new JPanel();
         nameTypePanel.setBackground(Color.LIGHT_GRAY);
@@ -820,6 +833,11 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         return nameTypePanel;
     }
+
+    /**
+     * Defines second tab to get other media item details.
+     * @return media item details panel.
+     */
     public JPanel defineGetDetailsTab(){
         JPanel itemMainDetails = new JPanel();
         itemMainDetails.setBackground(Color.PINK);
@@ -855,6 +873,11 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         return itemMainDetails;
     }
+
+    /**
+     * Defines last tab to submit media item details.
+     * @return
+     */
     public JPanel defineGetSubmitTab(){
         JPanel submitPanel = new JPanel();
         subItem = new JButton("Submit");
@@ -866,18 +889,26 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         return submitPanel;
     }
+
+    /**
+     * Defines exit button and adds action listener
+     */
     public void defineExitButton(){
         backToMain = new JButton("Go back!");
         backToMain.addActionListener(e -> goBack());
     }
+
+    /**
+     * Defines media item pane details
+     */
     public void defineMediaItemPane(){
         mediaItemsModel = new DefaultListModel<>();
         mediaItemsList = new JList<>(mediaItemsModel);
 
-        mediaItemsList.addMouseListener(new MouseAdapter() {
+        mediaItemsList.addMouseListener(new MouseAdapter() {    // Mouse adapter used to only select mouseClicked here
             @Override
             public void mouseClicked(MouseEvent e){
-                if(e.getClickCount() == 2){
+                if(e.getClickCount() == 2){ // If user double-clicks, details method called
                     mouseDetails(e);
                 }
             }
@@ -887,20 +918,28 @@ public class LibraryPage extends JFrame implements FileObserver {
         JLabel itemsHeading = new JLabel("Media items:");
         mediaItems.setColumnHeaderView(itemsHeading);
     }
+
+    /**
+     * Defines playlist pane
+     */
     public void definePlaylistPane(){
         playlistsModel = new DefaultComboBoxModel<>();
-        playlists = new JComboBox<>(playlistsModel);    // does accept model
+        playlists = new JComboBox<>(playlistsModel);    // Accepts model in comparison to items and playlist items as using combo box.
         playlists.addActionListener(e -> loadPlaylistItems());
     }
+
+    /**
+     * Defines playlist items pane.
+     */
     public void definePlaylistItemsPane(){
         playlistItemsModel = new DefaultListModel<>();
         playlistItemsList = new JList<>(playlistItemsModel);
-        playlistItems = new JScrollPane(playlistItemsList); // doesn't accept model
+        playlistItems = new JScrollPane(playlistItemsList);
 
-        playlistItemsList.addMouseListener(new MouseAdapter() {
+        playlistItemsList.addMouseListener(new MouseAdapter() { // Mouse adapter used to only select mouseClicked here
             @Override
             public void mouseClicked(MouseEvent e){
-                if(e.getClickCount() == 2){
+                if(e.getClickCount() == 2){ // If user double-clicks, details method called
                     mouseDetails(e);
                 }
             }
@@ -909,9 +948,14 @@ public class LibraryPage extends JFrame implements FileObserver {
         JLabel playlistItemsHeading = new JLabel("Playlist Items:");
         playlistItems.setColumnHeaderView(playlistItemsHeading);
     }
+
+    /**
+     * Defines and returns center panel
+     * @return center panel.
+     */
     public JPanel defineGetCenterPanel(){
         JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new GridLayout(0,3,10,0));
+        centerPanel.setLayout(new GridLayout(0,3,10,0));    // 3 columns used for media items , playlists and playlist items
 
         centerPanel.add(mediaItems);
         centerPanel.add(playlists);
@@ -919,6 +963,11 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         return centerPanel;
     }
+
+    /**
+     * Defines and returns bottom panel.
+     * @return bottom panel.
+     */
     public JPanel defineGetBottomPanel(){
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(new Color(24, 240, 151));
@@ -929,10 +978,14 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         bottomPanel.add(clickDetails);
         bottomPanel.add(backToMain);
-        bottomPanel.add(new JLabel());
+        bottomPanel.add(new JLabel());  // Label used for empty space here
 
         return bottomPanel;
     }
+    /**
+     * Defines and returns right panel.
+     * @return right panel.
+     */
     public JPanel defineGetRightPanel(){
         JPanel rightPanel = new JPanel();
         rightPanel.setPreferredSize(new Dimension(200,100));
@@ -947,6 +1000,11 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         return rightPanel;
     }
+
+    /**
+     * Defines and returns left panel.
+     * @return left panel.
+     */
     public JPanel defineGetLeftPanel(){
         JPanel leftPanel = new JPanel();
         leftPanel.setPreferredSize(new Dimension(220,100));
@@ -960,6 +1018,11 @@ public class LibraryPage extends JFrame implements FileObserver {
 
         return leftPanel;
     }
+
+    /**
+     * Defines and returns top panel.
+     * @return top panel.
+     */
     public JPanel defineGetTopPanel(){
         JPanel topPanel = new JPanel();
         topPanel.setBackground(new Color(24, 240, 151));
